@@ -49,11 +49,23 @@ discrete.median <- function(){
   which.max(pbinom(0:n, n, p)>=0.5)
 }
 
-# 
+# The sample mode cannot be found using mode(x). It return information about what type of object x is.
+# Use "table" to create a frequency table, then max to find the most frequent entry. 
+# then show the "key" for the most frequent index using.
+
+# data.mode(pbinom(1:50, 50, 0.2))
 data.mode <- function(x){
   t <- table(x)
   m <- max(t)
   as.numeric(names(t[t==m]))
+}
+
+# simulate the probability of rolling 6 dice (each dice has values [1,6]) and getting a value
+# of 18.
+
+dice.simulation <- function(){
+  r <- replicate(10^6, sum(sample(6,6,replace=T)))
+  sum(r==18)/10^6
 }
 
 
