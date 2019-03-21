@@ -97,7 +97,9 @@ chap8.beta.story <- function(a=6, b=1) {
     labs(x="x: Location of 'failure' event [0,1]") +
     labs(y="y: P(num_success=a)")
   
-  # 
+  # random location of 6 failures, 
+  # gets higher P(success) at smaller x
+  # > P(success) because so many failure events to choose from? :-)
   # chap8.beta.story(b=6)
 
 }
