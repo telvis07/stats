@@ -61,3 +61,44 @@ chap9.4 <- function() {
   # 
   v / sum(v)
 }
+
+chap9.5  <- function() {
+  # With a few modifications, we can simulate from an arbitrary Markov chain
+  # on a finite state space. For concreteness, we will illustrate how to simulate
+  # from the 4-state Markov chain in Example 11.1.5
+  
+  # transition matrix
+  Q <- matrix(c(1/3, 1/3, 1/3, 0,
+                0,0,1/2,1/2,
+                0,1,0,0,
+                1/2,0,0,1/2), nrow=4, ncol=4, byrow=T)
+  
+  # choose the number of states and the number of time
+  # periods to simulate
+  
+  M <- nrow(Q)
+  nsim <- 10^4
+  x <- rep(0,nsim)
+  x[1] <- sample(1:M,1)
+  
+  # for the simulation itself, we again use sample to choose a number
+  # from 1 to M. At time i, the chain was previously at state x[i-1], so
+  # must use row x[i-1] of the transition matrix to determine the probabilities
+  # of sampling 1, 2, .... M. The notation Q[x[i-1],] denotes row x[i-1] of the matrix
+  # Q.
+  
+  for ( i in 2:nsim) {
+    x[i] <- sample(M, 1, prob=Q[x[i-1],])
+  }
+  
+  # we then use the table command to calculate the number of times the chain visited 
+  # each state; dividing by length(x) converts the counts to proportions.
+  # The result is an approximation to the stationary distribution
+  table(x) / length(x)
+  
+  # for comparison, the tru stationary distribution of the chain is
+  # (3/14, 2/7, 3/14, 2/7) ~~ (0.214, 0.286, 0.214, 0.286)
+  
+}
+
+
