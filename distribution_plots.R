@@ -1,6 +1,35 @@
 source("utils.R")
 # output_png="mean_eeg_channels.png"
 
+chap3.poisson.story <- function(num_success=3, rate=2.5, interval=4) {
+  # The Poisson distribution is often used in situations where we are counting the number of successes
+  # in a particular region or interval of time and there are a large
+  # number of trials, each witha small probability of success. 
+  
+  # the parameter lambda is interpreted as the rate of occurrence of these rare events;
+  # lambda could be 20 (emails per hour), 10 (chips per cookie), and 2 
+  # (earthquakes per year). The poisson paradigm says that in applications simoilar to
+  # the ones above, we can approximate the distribution of the number of events that
+  # occur by a Poisson Distribution()
+  
+  # The number of people that show up at a bus stop is Poisson with a mean of 2.5 per hour. 
+  # If watching the bus stop for 4 hours, what is the 
+  # probability that $3$ or fewer people show up for the whole time?
+  
+  # Notice the multiplication by four in the function argument. Since lambda is specified as 
+  # events per hour we have to multiply by four to consider the number of events that occur in 4 hours.
+  lambda <- rate * interval
+  x <- seq(0, num_success+1, 0.01)
+  df <- data.frame(x=x)
+  
+  df['y'] <- ppois(x, lambda)
+  p <- ggplot(df, aes(x=x, y=y)) +
+    geom_line() +
+    labs(y="y: P(num_success=x | lambda)") + 
+    labs(x="x: number of events")
+  
+  p
+}
 
 chap8.gamma.story <- function(a_max=10, poisson_rate=10) {
   # in the poisson story, a is the number of successes we are waiting for,
@@ -26,7 +55,7 @@ chap8.gamma.story <- function(a_max=10, poisson_rate=10) {
     labs(x="x: Total waiting time on iterval [0,1]") +
     labs(y="y: P(num_success=a | poisson_rate)")
   
-  save_plot_filename = sprintf("pgamma_a_max_%s_poisson_rate_%s.png", a_max, poisson_rate)
+  save_plot_filename = sprintf("plots/pgamma_a_max_%s_poisson_rate_%s.png", a_max, poisson_rate)
   save_plot(p, save_plot_filename)
   
   p
@@ -68,9 +97,8 @@ chap8.beta.story <- function(a=6, b=1) {
   # > P(success) because so many failure events to choose from? :-)
   # chap8.beta.story(b=6)
   
-  save_plot_filename = sprintf("pbeta_a_%s_b_%s.png", a, b)
+  save_plot_filename = sprintf("plots/pbeta_a_%s_b_%s.png", a, b)
   save_plot(p, save_plot_filename)
   
   p
-  
 }
