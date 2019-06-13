@@ -1,6 +1,6 @@
 library(expm)
 
-chap9.1 <- function(){
+chap11.1 <- function(){
   # computing powers of a matix
   Q <- matrix(c(1/3, 1/3, 1/3, 0,
                 0, 0, 1/2, 1/2,
@@ -17,13 +17,13 @@ chap9.1 <- function(){
   # should be : 11/48
 }
 
-chap9.2 <- function() {
+chap11.2 <- function() {
   # compute powers of a matrix using `expm`
   Q5 <- Q %^% 5
   Q5[3,4]
 }
 
-chap9.3 <- function() {
+chap11.3 <- function() {
   # computing powers of a matix
   Q <- matrix(c(1/3, 1/3, 1/3, 0,
                 0, 0, 1/2, 1/2,
@@ -42,7 +42,7 @@ chap9.3 <- function() {
   # ret
 }
 
-chap9.4 <- function() {
+chap11.4 <- function() {
   # computing powers of a matix
   Q <- matrix(c(1/3, 1/3, 1/3, 0,
                 0, 0, 1/2, 1/2,
@@ -62,7 +62,7 @@ chap9.4 <- function() {
   v / sum(v)
 }
 
-chap9.5  <- function() {
+chap11.5  <- function() {
   # With a few modifications, we can simulate from an arbitrary Markov chain
   # on a finite state space. For concreteness, we will illustrate how to simulate
   # from the 4-state Markov chain in Example 11.1.5

@@ -1,0 +1,55 @@
+---
+title: "stats-101-book-notes"
+author: "technicalelvis.com"
+date: "6/13/2019"
+output: html_document
+
+fig_width: 5 
+fig_height: 3 
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(ggplot2)
+library(knitr)
+```
+
+## Introduction To Probability Notes
+
+I've recently completed reading [Introduction to Probability by Joseph Blizstein and Jessica Hwang](https://drive.google.com/file/d/1VmkAAGOYCTORq1wxSQqy255qLJjTNvBI/view). Each chapter in the book ends with a `R` section that implements examples of the topics covered in the chapter. This document captures 
+
+## Birthday Problem
+The following plot show the probability of at least one birthday match
+as a function of k. The first value of k for which the probability of
+a match exceeds 0.5 is k=23. Thus, in a group of 23 people, there is a better than 50% chance that two or more of them will have the same birthday. By the time we reach k = 57, the probability of a match exceeds 99%.
+
+```{r birthday, echo=FALSE, fig.width=6, fig.height=4, fig.align = "center"}
+binom_prob <- function(k){1-prod((365-k+1):365)/(365^k)}
+
+chap1.1 <- function() {
+  k <- 1:100
+  p <- sapply(k, binom_prob)
+  
+  df <- data.frame(k=k, p=p)
+  g <- ggplot(df, aes(x=k, y=p)) +
+    geom_point() +
+    xlab("k") + ylab("probability of a birthday match") +
+    geom_hline(yintercept=0.50, linetype="dashed", color = "red") +
+    theme(plot.title = element_text(hjust = 0.5)) +
+    labs(title="Probability that in a room of k people, \nat least two were born on the same day.")
+  g
+}
+
+chap1.1()
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
