@@ -9,7 +9,7 @@ chap_3_main <- function() {
   
   # Prob x<3 where X ~ Bin(5, 0.2)
   p <- pbinom(3, 5, 0.2)
-  print(paste("dbinom(3, 5, 0.2)", p, sep=" "))
+  print(paste("pbinom(3, 5, 0.2)", p, sep=" "))
   
   # Prob x=2 where X ~ HyperGeom(4, 48, 5)
   # probability of getting 2 aces

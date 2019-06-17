@@ -10,7 +10,7 @@ simulating_frequentist <- function() {
   # 
   n <- 10 ^ 5
   child1 <- sample(2, n, replace=TRUE)
-  child2 <- sample(2, n, replace = TRUE)
+  child2 <- sample(2, n, replace=TRUE)
   child1[0:10]
   n.b <- sum(child1==1)
   n.ab <- sum(child1==1 & child2 == 1)

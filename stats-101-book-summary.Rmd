@@ -17,7 +17,7 @@ library(knitr)
 
 ## Introduction To Probability Notes
 
-I've recently completed reading [Introduction to Probability by Joseph Blizstein and Jessica Hwang](https://drive.google.com/file/d/1VmkAAGOYCTORq1wxSQqy255qLJjTNvBI/view). Each chapter in the book ends with a `R` section that implements examples of the topics covered in the chapter. This document captures 
+I've recently completed reading [Introduction to Probability by Joseph Blizstein and Jessica Hwang](https://drive.google.com/file/d/1VmkAAGOYCTORq1wxSQqy255qLJjTNvBI/view). This project captures some topics I'd like to remember.
 
 ## Birthday Problem
 The following plot show the probability of at least one birthday match
@@ -44,12 +44,51 @@ chap1.1 <- function() {
 chap1.1()
 ```
 
-## Including Plots
+For a quick intuition intho why it should not be so surprising, note that with 23 people there are ${23 \choose 2} = 253$ pairs of people, any of which could be a birthday match.
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+## Binomial Distribution
+Suppose that _n_ independent Bernoulli trials are performed, each with the same success probability p. Let
+_X_ be the number of successes. The distribution of X is called a _Binomial distribution_. For example, let 
+
+Use `dbinom` to get the probability mass function (PMF). The PMF shows the probability that a random variable *equals* some discrete value.
+
+```{r dbinom, echo=FALSE, fig.width=6, fig.height=4, fig.align = "center"}
+chap3.1 <- function(){
+  # Prob x=1:5 where X ~ Bin(5, 0.2)
+  x <- 1:10
+  y <- dbinom(x, 10, 0.2)
+  
+  df <- data.frame(x=x, y=y)
+  g <- ggplot(df, aes(x=x, y=y)) +
+    geom_point() +
+    geom_linerange(aes(x=x, ymax=y, ymin=0)) +
+    ylab("PMF") +
+    theme(plot.title = element_text(hjust = 0.5)) +
+    labs(title="Probability of x=[1,10] successes where X ~ Bern(0.2)")
+  g
+
+}
+chap3.1()
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Use `pbinom` to get the cumulative distribution function (CDF). The CDF shows the probability that a random variable *is less than* some value.
+
+```{r pbinom, echo=FALSE, fig.width=6, fig.height=4, fig.align = "center"}
+chap3.2 <- function(){
+  # Prob x<1:10 where X ~ Bin(5, 0.2)
+  x <- 1:10
+  y <- pbinom(x, 10, 0.2)
+
+  df <- data.frame(x=x, y=y)
+  g <- ggplot(df, aes(x=x, y=y)) +
+    geom_line() +
+    scale_x_discrete(name="x", limits=x) +
+    ylab("CDF") +
+    theme(plot.title = element_text(hjust = 0.5)) +
+    labs(title="")
+  g
+
+}
+chap3.2()
+```
