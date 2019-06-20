@@ -24,7 +24,7 @@ The following plot show the probability of at least one birthday match
 as a function of k. The first value of k for which the probability of
 a match exceeds 0.5 is k=23. Thus, in a group of 23 people, there is a better than 50% chance that two or more of them will have the same birthday. By the time we reach k = 57, the probability of a match exceeds 99%.
 
-```{r birthday, echo=FALSE, fig.width=6, fig.height=4, fig.align = "center"}
+```{r birthday, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
 binom_prob <- function(k){1-prod((365-k+1):365)/(365^k)}
 
 chap1.1 <- function() {
@@ -51,9 +51,9 @@ For a quick intuition intho why it should not be so surprising, note that with 2
 Suppose that _n_ independent Bernoulli trials are performed, each with the same success probability p. Let
 _X_ be the number of successes. The distribution of X is called a _Binomial distribution_. For example, let 
 
-Use `dbinom` to get the probability mass function (PMF). The PMF shows the probability that a random variable *equals* some discrete value.
+Use `dbinom` to get the probability mass function (PMF). The PMF shows the probability that a random variable *equals* some discrete value. The plot shows the probability of getting *exactly* _x_ HEADS in 10 coin flips where the probability of HEADS is 20%.
 
-```{r dbinom, echo=FALSE, fig.width=6, fig.height=4, fig.align = "center"}
+```{r dbinom, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
 chap3.1 <- function(){
   # Prob x=1:5 where X ~ Bin(5, 0.2)
   x <- 1:10
@@ -63,18 +63,17 @@ chap3.1 <- function(){
   g <- ggplot(df, aes(x=x, y=y)) +
     geom_point() +
     geom_linerange(aes(x=x, ymax=y, ymin=0)) +
-    ylab("PMF") +
+    ylab("Binomial PMF") +
     theme(plot.title = element_text(hjust = 0.5)) +
-    labs(title="Probability of x=[1,10] successes where X ~ Bern(0.2)")
+    labs(title="X ~ Bin(1:10, 0.2)")
   g
-
 }
 chap3.1()
 ```
 
-Use `pbinom` to get the cumulative distribution function (CDF). The CDF shows the probability that a random variable *is less than* some value.
+Use `pbinom` to get the cumulative distribution function (CDF). The CDF shows the probability that a random variable *is less than* some value. The plot shows the probability of getting *less than* _x_ HEADS in 10 coin flips where the probability of HEADS is 20%.
 
-```{r pbinom, echo=FALSE, fig.width=6, fig.height=4, fig.align = "center"}
+```{r pbinom, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
 chap3.2 <- function(){
   # Prob x<1:10 where X ~ Bin(5, 0.2)
   x <- 1:10
@@ -84,11 +83,71 @@ chap3.2 <- function(){
   g <- ggplot(df, aes(x=x, y=y)) +
     geom_line() +
     scale_x_discrete(name="x", limits=x) +
-    ylab("CDF") +
+    ylab("Binomial CDF") +
     theme(plot.title = element_text(hjust = 0.5)) +
-    labs(title="")
+    labs(title="X ~ Bin(1:10, 0.2)")
   g
 
 }
 chap3.2()
+```
+
+
+## Hypergeometric Distribution
+
+Consider an playing cards example with _a_ aces and _b_ non-aces (ie. the 48 other cards that are not aces). We draw _n_ cards out of the deck at random without replacement, such that 
+${a + b \choose n}$ cards are equally likely. Let _X_ be the number of aces in the in your hand after drawing _n_ cards. Then _X_ is said to have the
+_Hypergeometric distribution_ with parameters a, b and n; we denote this by _X ~ HGeom(a,b,n)_.
+
+Use `dhyper` to get the probability mass function (PMF). The PMF shows the probability that a random variable *equals* some discrete value. The plot shows the probability of having *exactly* 1, 2, 3, or 4 aces in a 5 card hand from a 
+deck with 52 cards.
+
+```{r dhyper, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
+
+chap3.3 <- function() {
+  # Prob x=1:4 where X ~ HyperGeom(4, 48, 5)
+  # from a deck with 
+  # - 1:4 aces
+  # - 48 non aces
+  # - choose 5 cards per hand
+  x <- 1:4
+  y <- dhyper(x, 4, 48, 5)
+  df <- data.frame(x=x, y=y)
+  g <- ggplot(df, aes(x=x, y=y)) +
+    geom_point() +
+    geom_linerange(aes(x=x, ymax=y, ymin=0)) +
+    scale_x_discrete(name="x", limits=x) +
+    ylab("Hypergeometric PMF") +
+    theme(plot.title = element_text(hjust = 0.5)) +
+    labs(title="X ~ HyperGeom(1:4, 48, 5)")
+  g
+}
+
+chap3.3()
+```
+
+
+Use `phyper` to get the cumulative distribution function (CDF). The CDF shows the probability that a random variable *is less than* some value. The plot shows the probability of having *less than* 1, 2, 3, or 4 aces in a 5 card hand from a deck containing 52 cards.
+
+```{r phyper, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
+
+chap3.4 <- function() {
+  # Prob x=1:4 where X ~ HyperGeom(4, 48, 5)
+  # from a deck with 
+  # - 1:4 aces
+  # - 48 non aces
+  # - choose 5 cards per hand
+  x <- 1:4
+  y <- phyper(x, 4, 48, 5)
+  df <- data.frame(x=x, y=y)
+  g <- ggplot(df, aes(x=x, y=y)) +
+    geom_line() +
+    scale_x_discrete(name="x", limits=x) +
+    ylab("Hypergeometric CDF") +
+    theme(plot.title = element_text(hjust = 0.5)) +
+    labs(title="X ~ HyperGeom(1:4, 48, 5)")
+  g
+}
+
+chap3.4()
 ```
