@@ -7,15 +7,21 @@ do_unif <- function() {
   # PDF
   x <- seq(-0.5, 1.5, 1/10000)
   y <- dunif(x, 0, 1)
-  plot(x, y, type="l", xlab="x", ylab = "dunif(x)", main="Uniform Density PDF")
+  # plot(x, y, type="l", xlab="x", ylab = "dunif(x)", main="Uniform Density PDF")
   # curve(dunif, from=-3, to=3, n=10000)
+  datums <- data.frame(x=x, y=y)
+  obj <- ggplot(datums, aes(x, y)) + geom_line() + labs(title="Uniform PDF")
+  obj
 }
 
 do_punif <- function() {
   # CDF
   x <- seq(0, 1, 1/1000)
   y <- punif(x, 0, 1)
-  plot(x, y, type="l", main="Uniform Density CDF")
+  # plot(x, y, type="l", main="Uniform Density CDF")
+  datums <- data.frame(x=x, y=y)
+  obj <- ggplot(datums, aes(x, y)) + geom_line() + labs(title="Uniform CDF")
+  obj
 }
 
 do_runif <- function() {

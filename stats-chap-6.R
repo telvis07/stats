@@ -2,7 +2,7 @@
 # Let's use the norm(0,1) MGF which is given by M(t) = exp(t^2)/2
 M <- function(t){ exp(t^2/ 2)}
 
-example.1 <- function() {
+mgf.example.1 <- function() {
   # M(0) evaluates the function at 0. M(1:10) evaluates the function at 1,2 ... 10
   # this plots M from [-3, 3]
   curve(M, from=-3, to=3)

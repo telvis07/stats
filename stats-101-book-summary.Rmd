@@ -1,5 +1,5 @@
 ---
-title: "stats-101-book-notes"
+title: "Common Probability Distributions"
 author: "technicalelvis.com"
 date: "6/13/2019"
 output: html_document
@@ -13,45 +13,22 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(ggplot2)
 library(knitr)
+library(ggplot2)
+library(gridExtra)
+library(mvtnorm)
 ```
 
-## Introduction To Probability Notes
+## Common Probability Distributions
 
-I've recently completed reading [Introduction to Probability by Joseph Blizstein and Jessica Hwang](https://drive.google.com/file/d/1VmkAAGOYCTORq1wxSQqy255qLJjTNvBI/view). This project captures some topics I'd like to remember.
-
-## Birthday Problem
-The following plot show the probability of at least one birthday match
-as a function of k. The first value of k for which the probability of
-a match exceeds 0.5 is k=23. Thus, in a group of 23 people, there is a better than 50% chance that two or more of them will have the same birthday. By the time we reach k = 57, the probability of a match exceeds 99%.
-
-```{r birthday, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
-binom_prob <- function(k){1-prod((365-k+1):365)/(365^k)}
-
-chap1.1 <- function() {
-  k <- 1:100
-  p <- sapply(k, binom_prob)
-  
-  df <- data.frame(k=k, p=p)
-  g <- ggplot(df, aes(x=k, y=p)) +
-    geom_point() +
-    xlab("k") + ylab("probability of a birthday match") +
-    geom_hline(yintercept=0.50, linetype="dashed", color = "red") +
-    theme(plot.title = element_text(hjust = 0.5)) +
-    labs(title="Probability that in a room of k people, \nat least two were born on the same day.")
-  g
-}
-
-chap1.1()
-```
-
-For a quick intuition intho why it should not be so surprising, note that with 23 people there are ${23 \choose 2} = 253$ pairs of people, any of which could be a birthday match.
+This document lists common probability distributions described in [Introduction to Probability by Joseph Blizstein and Jessica Hwang](https://drive.google.com/file/d/1VmkAAGOYCTORq1wxSQqy255qLJjTNvBI/view). We show both the density and distribution plots. 
 
 
-## Binomial Distribution
+## Binomial
 Suppose that _n_ independent Bernoulli trials are performed, each with the same success probability p. Let
 _X_ be the number of successes. The distribution of X is called a _Binomial distribution_. For example, let 
 
-Use `dbinom` to get the probability mass function (PMF). The PMF shows the probability that a random variable *equals* some discrete value. The plot shows the probability of getting *exactly* _x_ HEADS in 10 coin flips where the probability of HEADS is 20%.
+### Binomial Density
+A density plot shows the probability that a random variable *equals* some discrete value. The plot shows the probability of getting *exactly* _x_ HEADS in 10 coin flips where the probability of HEADS is 20%.
 
 ```{r dbinom, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
 chap3.1 <- function(){
@@ -63,15 +40,17 @@ chap3.1 <- function(){
   g <- ggplot(df, aes(x=x, y=y)) +
     geom_point() +
     geom_linerange(aes(x=x, ymax=y, ymin=0)) +
-    ylab("Binomial PMF") +
     theme(plot.title = element_text(hjust = 0.5)) +
-    labs(title="X ~ Bin(1:10, 0.2)")
+    labs(title="Binomial Density")
   g
 }
 chap3.1()
 ```
 
-Use `pbinom` to get the cumulative distribution function (CDF). The CDF shows the probability that a random variable *is less than* some value. The plot shows the probability of getting *less than* _x_ HEADS in 10 coin flips where the probability of HEADS is 20%.
+
+### Binomial Distribution
+
+The distribution plot shows the probability that a random variable *is less than* some value. The plot shows the probability of getting *less than* _x_ HEADS in 10 coin flips where the probability of HEADS is 20%.
 
 ```{r pbinom, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
 chap3.2 <- function(){
@@ -83,9 +62,9 @@ chap3.2 <- function(){
   g <- ggplot(df, aes(x=x, y=y)) +
     geom_line() +
     scale_x_discrete(name="x", limits=x) +
-    ylab("Binomial CDF") +
+    ylab("y") +
     theme(plot.title = element_text(hjust = 0.5)) +
-    labs(title="X ~ Bin(1:10, 0.2)")
+    labs(title="Binomial Distribution")
   g
 
 }
@@ -93,14 +72,15 @@ chap3.2()
 ```
 
 
-## Hypergeometric Distribution
+## Hypergeometric
 
-Consider an playing cards example with _a_ aces and _b_ non-aces (ie. the 48 other cards that are not aces). We draw _n_ cards out of the deck at random without replacement, such that 
-${a + b \choose n}$ cards are equally likely. Let _X_ be the number of aces in the in your hand after drawing _n_ cards. Then _X_ is said to have the
+Consider a playing cards example with _a_ aces and _b_ non-aces (ie. the 48 other cards that are not aces). We draw _n_ cards out of the deck at random without replacement, such that 
+${a + b \choose n}$ cards are equally likely. Let _X_ be the number of aces in the in your hand after drawing _n_ cards. _X_ is said to have the
 _Hypergeometric distribution_ with parameters a, b and n; we denote this by _X ~ HGeom(a,b,n)_.
 
-Use `dhyper` to get the probability mass function (PMF). The PMF shows the probability that a random variable *equals* some discrete value. The plot shows the probability of having *exactly* 1, 2, 3, or 4 aces in a 5 card hand from a 
-deck with 52 cards.
+### Hypergeometric Density
+
+The plot shows the probability of having *exactly* 1, 2, 3, or 4 aces in a 5 card hand from a deck with 52 cards.
 
 ```{r dhyper, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
 
@@ -117,17 +97,18 @@ chap3.3 <- function() {
     geom_point() +
     geom_linerange(aes(x=x, ymax=y, ymin=0)) +
     scale_x_discrete(name="x", limits=x) +
-    ylab("Hypergeometric PMF") +
+    ylab("y") +
     theme(plot.title = element_text(hjust = 0.5)) +
-    labs(title="X ~ HyperGeom(1:4, 48, 5)")
+    labs(title="Hypergeometric Density")
   g
 }
 
 chap3.3()
 ```
 
+### Hypergeometric Cumulative Distribution
 
-Use `phyper` to get the cumulative distribution function (CDF). The CDF shows the probability that a random variable *is less than* some value. The plot shows the probability of having *less than* 1, 2, 3, or 4 aces in a 5 card hand from a deck containing 52 cards.
+The plot shows the probability of having *less than* 1, 2, 3, or 4 aces in a 5 card hand from a deck containing 52 cards.
 
 ```{r phyper, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
 
@@ -143,11 +124,341 @@ chap3.4 <- function() {
   g <- ggplot(df, aes(x=x, y=y)) +
     geom_line() +
     scale_x_discrete(name="x", limits=x) +
-    ylab("Hypergeometric CDF") +
+    ylab("y") +
     theme(plot.title = element_text(hjust = 0.5)) +
-    labs(title="X ~ HyperGeom(1:4, 48, 5)")
+    labs(title="Hypergeometric Cumulative Distribution")
   g
 }
 
 chap3.4()
 ```
+
+
+## Uniform
+
+A uniform r.v. on the interval (a,b) is a completely random number between _a_ and _b_. The PDF is _constant_ over the interval.
+
+### Uniform Density
+
+The following plot shows the probability that `Unif(0,1)` is *less than or equal* to any value between -0.5 and +1.5.
+
+```{r dunif, echo=F, fig.width=6, fig.height=4, fig.align="center"}
+do_dunif <- function() {
+  # PDF
+  x <- seq(-0.5, 1.5, 1/10000)
+  y <- dunif(x, 0, 1)
+  datums <- data.frame(x=x, y=y)
+  obj <- ggplot(datums, aes(x=x, y=y)) + 
+    labs(title="Uniform Density") +
+    geom_line()
+  obj
+}
+
+do_dunif()
+```
+
+### Uniform Cumulative Distribution
+
+The following plot shows the probability that `Unif(0,1)` is *exactly equals* any value between -0.5 and +1.5.
+
+```{r punif, echo=F, fig.width=6, fig.height=4, fig.align="center"}
+do_punif <- function() {
+  # PDF
+  x <- seq(-0.5, 1.5, 1/10000)
+  y <- punif(x, 0, 1)
+  # plot(x, y, type="l", xlab="x", ylab = "dunif(x)", main="Uniform Density PDF")
+  # curve(dunif, from=-3, to=3, n=10000)
+  datums <- data.frame(x=x, y=y)
+  obj <- ggplot(datums, aes(x=x, y=y)) + 
+    labs(title="Uniform Cumulative Distribution") +
+    geom_line()
+    # geom_histogram(binwidth = 0.10, color="black", fill="white")
+  obj
+}
+
+do_punif()
+```
+
+
+
+## Poisson
+
+The Poisson distribution is often used in situations where we are counting the number of successes in a particular region or interval of time and there are a large number of trials. Each trial has a small probability of success. The parameter lambda ($\lambda$) is interpreted as the rate of occurrence of these rare events.
+
+$\lambda$ could be 20 (emails per hour), 10 (chips per cookie), and 2 (earthquakes per year). The poisson paradigm says that in applications similar to the ones above, we can approximate the distribution of the number of events that occur by a Poisson Distribution.
+
+### Poisson Density
+Consider an example where the number of people that show up at a bus stop is Poisson with a mean of 2.5 per hour. If watching the bus stop for 1 hours, what is the 
+probability that exactly $3$ people show up for the whole time?
+
+```{r dpois, echo=F,  fig.width=6, fig.height=4, fig.align = "center"}
+chap3.poisson.story.dpois <- function(num_success=3, rate=2.5, interval=1) {
+  # Notice the multiplication by four in the function argument. Since lambda is specified as 
+  # events per hour we have to multiply by four to consider the number of events that occur in 4 hours.
+  lambda <- rate * interval
+  x <- 1:10
+  df <- data.frame(x=x)
+  
+  df['y'] <- dpois(x, lambda)
+  p <- ggplot(df, aes(x=x, y=y)) +
+       geom_point() +
+       geom_linerange(aes(x=x, ymax=y, ymin=0)) +
+       scale_x_discrete(name="x", limits=x) +
+       ylab("y") +
+       theme(plot.title = element_text(hjust = 0.5)) +
+       labs(title="Poisson Density")
+    
+    #  geom_line() +
+   #  labs(y="y: P(num_success=x | lambda)") + 
+   #  labs(x="x: number of events")
+  
+  p
+}
+
+chap3.poisson.story.dpois()
+```
+
+
+### Poisson Cumulative Distribution
+For the previous example, what is the probability that $3$ or fewer people show up for the whole time?
+
+```{r ppois, echo=F,  fig.width=6, fig.height=4, fig.align = "center"}
+chap3.poisson.story.ppois <- function(num_success=3, rate=2.5, interval=1) {
+  # Notice the multiplication by four in the function argument. Since lambda is specified as 
+  # events per hour we have to multiply by four to consider the number of events that occur in 4 hours.
+  lambda <- rate * interval
+  x <- 0:10
+  df <- data.frame(x=x)
+  
+  df['y'] <- ppois(x, lambda)
+  p <- ggplot(df, aes(x=x, y=y)) +
+    geom_line() +
+    labs(y="y") + 
+    labs(x="x: number of events") +
+    labs(title="Poisson Cumulative Distribution")
+    
+  
+  p
+}
+
+chap3.poisson.story.ppois()
+```
+
+### Simulating a Poisson Process containing 1 event type
+The following example illustrates how to simulate arrival times within a specified interval $(0,L]$. 
+
+1. Generate the number of arrivals $N(L)$ from $Pois(\lambda*L)$. 
+2. Conditional on $N(L) = n$, generate arrival times from ordered `Unif(O,L)`. 
+
+The following code simulates arrivals from a Poisson process with rate 10 events/interval after observing for 5 interval
+
+```{r poisson1, echo=T, fig.width=6, fig.height=4, fig.align="center"}
+pois.1 <- function() {
+
+  # 5 intervals
+  L <- 5
+  
+  # 10 events / interval
+  lambda <- 10
+  
+  # randomly generate number of events using pois(lambda*L)
+  n <- rpois(1, lambda*L)
+  
+  # generate random "times" from 0 through L for "n" events, then sort them
+  t <- sort(runif(n, 0, L))
+  
+  # visualize L events. 
+  # x=times each n event occurs
+  # y=event index
+  df <- data.frame(x=t, y=1:n)
+  g <- ggplot(df, aes(x=x, y=y) ) +
+    geom_point() +     
+    scale_y_continuous(name= "N(t): Number of successes at t") +
+    scale_x_continuous(name= "Time t")
+  
+  g
+}
+
+pois.1()
+```
+
+### Simulating a Poisson Process containing 2 event types
+
+Now, let's build on the previous example to model a Poisson process that contains 2 event types.
+
+1. Generate the number of arrivals $N(L)$ from $Pois(\lambda*L)$. 
+2. Conditional on $N(L) = n$, generate arrival times from ordered `Unif(O,L)`. 
+3. For each arrival, we flip a coin with probability `Bern(0.3)` of Heads; these coin tosses are labeled as `type-1`; the rest are labeled as `type-2`. 
+  
+The resulting vectors of arrival times t1 and t2 are realizations of 2 independent Poisson processes.
+
+```{r poisson2, echo=T, fig.width=6, fig.height=4, fig.align="center"}
+pois.2 <- function() {
+  
+  # 5 intervals
+  L <- 5
+  
+  # 10 events/interval
+  lambda <- 10
+  
+  # randomly generate number of events using pois(lambda*L)
+  n <- rpois(1, lambda*L)
+  
+  # generate random "times" from 0 through L for "n" events, then sort them
+  t <- sort(runif(n, 0, L))
+  
+  # type-1 event probabilty: p=0.3
+  p <- 0.3
+  y <- rbinom(n, 1, p)
+  
+  # assign "event times" as type-1 or type-2 
+  t1 <- t[y==1]
+  t2 <- t[y==0]
+  
+  # as before, we can plot the number of arrivals in each Poisson process: N_1(t) and N_2(t).
+  
+  # visualize the plot for type #1 events
+  df <- data.frame(x=t1, y=1:length(t1))
+  p1 <- ggplot(df, aes(x=x, y=y) ) +
+    geom_point()  +
+    theme(
+          axis.ticks.y=element_blank()) +
+  ylab("type1: event count") +
+  xlab("Time t")
+  # scale_y_continuous(name= "N_1(t): Number of successes at t") +
+  # scale_x_continuous(name= "Time t")
+  
+  # visualize the plot for type #2 events
+  df <- data.frame(x=t2, y=1:length(t2))
+  p2 <- ggplot(df, aes(x=x, y=y) ) +
+    geom_point()  +
+    theme(
+          axis.ticks.y=element_blank()) +
+    ylab("type2: event count") +
+    xlab("Time t")
+  # scale_y_continuous(name= "N_2(t): Number of successes at t") +
+  # scale_x_continuous(name= "Time t")
+  
+  grid.arrange(p1, p2, nrow=2)
+}
+
+pois.2()
+```
+
+## Gaussian
+
+The Normal distribution is a famous continuous distribution with a bell-shaped PDF. It is extremely widely used in statistics because of a theorem,
+the [central limit theorem](https://github.com/telvis07/StatsInf_PeerAssessment1/blob/master/project.md), which says under very weak assumptions, the sum of a large number of i.i.d. random variables has an approximately Normal 
+distribution - regardless of the distribution of the underlying random variable.
+
+The simplest normal distribution is the _standard normal_, which is centered at 0 and has a variance of 1.
+
+### Gaussian Density
+
+The following plot shows the probability that `Normal(0,1)` is *less than or equal* to any value between -3 and +3.
+ 
+```{r dnorm, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
+ do_dnorm <- function() {
+ x <- seq(-3, 3, 0.01)
+ y <- dnorm(x)
+ datums <- data.frame(x=x, y=y)
+ g <- ggplot(datums, aes(x, y)) + geom_line() + 
+ theme(plot.title = element_text(hjust = 0.5)) +
+ labs(title="Normal Density")
+ g
+}
+ 
+do_dnorm()
+```
+
+
+### Gaussian Cumulative Distribution
+
+The following plot shows the probability that `Normal(0,1)` *exactly equals* any value between -3 and +3.
+ 
+
+```{r pnorm, echo=F, fig.width=6, fig.height=4, fig.align="center"}
+do_pnorm <- function() {
+   # x <- seq(0, 1, 0.001)
+   x <- seq(-3, 3, 0.01)
+   y <- pnorm(x)
+   df <- data.frame(x=x, y=y)
+   ggplot(df, aes(x=x, y=y)) + geom_line() +
+     theme(plot.title = element_text(hjust = 0.5)) +
+     labs(title="Normal Cumulative Distribution")
+}
+
+do_pnorm()
+```
+
+
+### Multivariate Normal
+
+A multivariate (MVN) normal distribution generalizes the Normal distribution into higher dimension. The parameters of a multi-variate normal are:
+
+1. The _mean vector_ ($\mu_1, \mu_2, ... \mu_n$)
+2. The _covariance matrix_, which is the _k x k_ matrix of covariances between components, arranged so that the
+row _i_, column _j_ entry is Cov($X_i, X_j$).
+
+The following plot shows random variables from 2 bivariate normals: `BLUE` and `ORANGE`. The `BLUE` distribution has parameters
+$N((1,0)^T, I)$. The `ORANGE` distribition has parameters $N((0,1)T, I)$. **I** represents a 2x2 identity matrix - where the diagonals are `1` and other values are `0`.
+
+```{r mvnplot, echo=T, fig.width=6, fig.height=4, fig.align = "center"}
+do_mvtnorm <- function(mu1, mu2, s1=1, s2=1, rho_0=0, N=10) {
+  # dvmnorm can be used for calculating the joing PDF and rmvnorm can be used for 
+  # generating random vectors.
+  meanvector <- c(mu1,mu2)
+
+  # The covariance matrix is (assuming sd(Z)=s1=1, sd(W)=s2=1)
+  # [(1, rho), (rho, 1)]
+  # because:
+  # Cov(Z, Z) = Var(Z) = 1 (this is the upper left entry)
+  # Cov(W, W) = Var(W) = 1 (this is the lower right entry)
+  # Cov(Z, W) = Corr(Z,W) * sd(Z) * sd(W) = rho 
+  # 
+  # NOTE (if rho_0=1, then covmatrix equals IDENTITY matrix(c(1, 0, 0, 1), 2))
+  covmatrix = matrix(c(s1^2, s1*s2*rho_0, s1*s2*rho_0, s2^2), nrow=2, ncol=2)
+
+  # now r  is N x 2 matrix, with each row a BVN random vector. 
+  r <- rmvnorm(n=N, mean=meanvector, sigma=covmatrix)
+
+  r
+}
+
+generate_mvn_plot <- function(N=100) {
+  # N((1,0)^T, I) labeled class 'BLUE'
+  bvn1 <- do_mvtnorm(mu1=1, mu2=0, s1=1, s2=1, rho_0=0, N=N)
+  df1 <- data.frame(bvn1)
+  colnames(df1) <- c("x1", "x2")
+  df1["label"] = "BLUE"
+
+  # N((0,1)T, I) labeled class 'ORANGE'
+  bvn2 <- do_mvtnorm(mu1=0, mu2=1, s1=1, s2=1, rho_0=0,  N=N)
+  df2 <- data.frame(bvn2)
+  colnames(df2) <- c("x1", "x2")
+  df2["label"] = "ORANGE"
+
+  # stack the dataframes
+  df <- rbind(df1, df2)
+
+  # Plot BLUE vs ORANGE
+  g <- ggplot(df, aes(x=x1, y=x2, color=label)) +
+    geom_point() +
+    scale_color_manual(breaks = c("BLUE", "ORANGE"),
+                       values=c("blue", "orange"))
+  g
+
+  
+}
+
+generate_mvn_plot()
+```
+
+
+
+
+
+
+
+
+

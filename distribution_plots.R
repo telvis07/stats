@@ -102,3 +102,77 @@ chap8.beta.story <- function(a=6, b=1) {
   
   p
 }
+
+
+
+# ## Uniform Distribution
+# 
+# Consider
+# 
+# ```{r dunif, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
+# do_unif <- function() {
+#   # PDF
+#   x <- seq(-0.5, 1.5, 1/10000)
+#   y <- dunif(x, 0, 1)
+#   # plot(x, y, type="l", xlab="x", ylab = "dunif(x)", main="Uniform Density PDF")
+#   # curve(dunif, from=-3, to=3, n=10000)
+#   datums <- data.frame(x=x, y=y)
+#   g <- ggplot(datums, aes(x, y)) + geom_line() + 
+#     theme(plot.title = element_text(hjust = 0.5)) +
+#     labs(title="Uniform PDF")
+#   g
+# }
+# 
+# do_unif()
+# ```
+# 
+# ```{r punif, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
+# do_punif <- function() {
+#   # CDF
+#   x <- seq(0, 1, 1/1000)
+#   y <- punif(x, 0, 1)
+#   # plot(x, y, type="l", main="Uniform Density CDF")
+#   datums <- data.frame(x=x, y=y)
+#   g <- ggplot(datums, aes(x, y)) + geom_line() + 
+#     theme(plot.title = element_text(hjust = 0.5)) +
+#     labs(title="Uniform CDF")
+#   g
+# }
+# 
+# do_punif()
+# ```
+# 
+# ## Normal Distribution
+# 
+# ```{r dnorm, echo=F, fig.width=6, fig.height=4, fig.align = "center}
+# do_dnorm <- function() {
+# x <- seq(-3, 3, 0.01)
+# y <- dnorm(x)
+# datums <- data.frame(x=x, y=y)
+# g <- ggplot(datums, aes(x, y)) + geom_line() + 
+# theme(plot.title = element_text(hjust = 0.5)) +
+# labs(title="Normal Dist PDF")
+# g
+# }
+# 
+# do_dnorm()
+# ```
+# 
+# 
+# ```{r pnorm, echo=F, fig.width=6, fig.height=4, fig.align = "center}
+# do_pnorm <- function() {
+#   x <- seq(0, 1, 0.001)
+#   y <- pnorm(x)
+#   df <- data.frame(x=x, y=y)
+#   ggplot(df, aes(x=x, y=y)) + geom_line() + 
+#     theme(plot.title = element_text(hjust = 0.5)) +
+#     labs(title="Normal Dist CDF")
+# }
+# 
+# do_pnorm()
+# ```
+
+
+
+
+
