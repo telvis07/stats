@@ -1,8 +1,13 @@
 ---
 title: "Stats 101: Common Probability Distributions"
 author: "technicalelvis.com"
-date: "6/13/2019"
-output: html_document
+output: 
+  html_document:
+    toc: true
+    theme: cosmo
+    pandoc_args: [
+      "-o", "index.html"
+    ]
 
 fig_width: 5 
 fig_height: 3 
