@@ -1,5 +1,5 @@
 ---
-title: "Common Probability Distributions"
+title: "Stats 101: Common Probability Distributions"
 author: "technicalelvis.com"
 date: "6/13/2019"
 output: html_document
@@ -20,7 +20,26 @@ library(mvtnorm)
 
 ## Common Probability Distributions
 
-This document lists common probability distributions described in [Introduction to Probability by Joseph Blizstein and Jessica Hwang](https://drive.google.com/file/d/1VmkAAGOYCTORq1wxSQqy255qLJjTNvBI/view). We show both the density and distribution plots. 
+This document lists common probability distributions described in [Introduction to Probability by Joseph Blizstein and Jessica Hwang](https://drive.google.com/file/d/1VmkAAGOYCTORq1wxSQqy255qLJjTNvBI/view). For each distribution, we show both the _probability density_ and _cumulative distribution_ plots. 
+
+**Probability density** plots show the _exact probability_ that a random variable $X$ equals a some value $x$; expressed using the notation: $P(X=x)$. 
+
+**Cumulative distribution** plots show the probablity that a random variable $X$ _is less than or equal to_ some value $x$; expressed using the notation $P(X<=x)$.
+
+The cumulative distribution answers questions like: 
+
+* "probability a person's height equals 4 feet __or shorter__"
+* "probability a cookie has __at least__ 10 chocolate chips"
+* "probability a shopping cart has 3 items __or fewer__". 
+
+The __emphasized__ phrases indicate we want the total population up to a certain value. 
+This contrasts with probability density, that answers questions like:
+
+* "probability a person's height __exactly equals__ 4 feet"
+* "probability a cookie has __exactly__ 10 chocolate chips"
+* "probability a shopping cart has __exactly__ 3 items".
+
+The __emphasized__ phrases indicate we want the slice of the population that exactly equals a certain value.
 
 
 ## Binomial
@@ -48,7 +67,7 @@ chap3.1()
 ```
 
 
-### Binomial Distribution
+### Binomial Cumulative distribution
 
 The distribution plot shows the probability that a random variable *is less than* some value. The plot shows the probability of getting *less than* _x_ HEADS in 10 coin flips where the probability of HEADS is 20%.
 
@@ -64,7 +83,7 @@ chap3.2 <- function(){
     scale_x_discrete(name="x", limits=x) +
     ylab("y") +
     theme(plot.title = element_text(hjust = 0.5)) +
-    labs(title="Binomial Distribution")
+    labs(title="Binomial Cumulative Density")
   g
 
 }
@@ -166,14 +185,12 @@ do_punif <- function() {
   # PDF
   x <- seq(-0.5, 1.5, 1/10000)
   y <- punif(x, 0, 1)
-  # plot(x, y, type="l", xlab="x", ylab = "dunif(x)", main="Uniform Density PDF")
-  # curve(dunif, from=-3, to=3, n=10000)
   datums <- data.frame(x=x, y=y)
   obj <- ggplot(datums, aes(x=x, y=y)) + 
     labs(title="Uniform Cumulative Distribution") +
     geom_line()
-    # geom_histogram(binwidth = 0.10, color="black", fill="white")
-  obj
+
+    obj
 }
 
 do_punif()
@@ -207,10 +224,6 @@ chap3.poisson.story.dpois <- function(num_success=3, rate=2.5, interval=1) {
        ylab("y") +
        theme(plot.title = element_text(hjust = 0.5)) +
        labs(title="Poisson Density")
-    
-    #  geom_line() +
-   #  labs(y="y: P(num_success=x | lambda)") + 
-   #  labs(x="x: number of events")
   
   p
 }
@@ -233,6 +246,7 @@ chap3.poisson.story.ppois <- function(num_success=3, rate=2.5, interval=1) {
   df['y'] <- ppois(x, lambda)
   p <- ggplot(df, aes(x=x, y=y)) +
     geom_line() +
+    scale_x_discrete(name="x", limits=x) +
     labs(y="y") + 
     labs(x="x: number of events") +
     labs(title="Poisson Cumulative Distribution")
@@ -250,7 +264,7 @@ The following example illustrates how to simulate arrival times within a specifi
 1. Generate the number of arrivals $N(L)$ from $Pois(\lambda*L)$. 
 2. Conditional on $N(L) = n$, generate arrival times from ordered `Unif(O,L)`. 
 
-The following code simulates arrivals from a Poisson process with rate 10 events/interval after observing for 5 interval
+The following code simulates arrivals from a Poisson process with rate 10 events/interval after observing for 5 intervals.
 
 ```{r poisson1, echo=T, fig.width=6, fig.height=4, fig.align="center"}
 pois.1 <- function() {
@@ -274,7 +288,7 @@ pois.1 <- function() {
   g <- ggplot(df, aes(x=x, y=y) ) +
     geom_point() +     
     scale_y_continuous(name= "N(t): Number of successes at t") +
-    scale_x_continuous(name= "Time t")
+    scale_x_continuous(name= "Time t (intevals)")
   
   g
 }
@@ -318,28 +332,44 @@ pois.2 <- function() {
   # as before, we can plot the number of arrivals in each Poisson process: N_1(t) and N_2(t).
   
   # visualize the plot for type #1 events
-  df <- data.frame(x=t1, y=1:length(t1))
-  p1 <- ggplot(df, aes(x=x, y=y) ) +
-    geom_point()  +
+  df1 <- data.frame(x=t1, y=1:length(t1))
+  p1 <- ggplot(df1, aes(x=x, y=y) ) +
+    geom_point(shape=16, color="blue")  +
     theme(
           axis.ticks.y=element_blank()) +
-  ylab("type1: event count") +
-  xlab("Time t")
-  # scale_y_continuous(name= "N_1(t): Number of successes at t") +
-  # scale_x_continuous(name= "Time t")
+  ylab("type1: count") +
+    theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
   
   # visualize the plot for type #2 events
-  df <- data.frame(x=t2, y=1:length(t2))
-  p2 <- ggplot(df, aes(x=x, y=y) ) +
+  df2 <- data.frame(x=t2, y=1:length(t2))
+  p2 <- ggplot(df2, aes(x=x, y=y) ) +
+    geom_point(shape=17, color="orange")  +
+    theme(
+          axis.ticks.y=element_blank()) +
+    ylab("type2: count") +
+      theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+  
+  # visualize the plot for both event types
+  df1$event_type <- "type-1"
+  df2$event_type <- "type-2"
+  df3 <- rbind(df1, df2)
+  df3$y <- 1:length(t)
+  
+  p3 <- ggplot(df3, aes(x=x, y=y, color=event_type) ) +
     geom_point()  +
     theme(
           axis.ticks.y=element_blank()) +
-    ylab("type2: event count") +
-    xlab("Time t")
-  # scale_y_continuous(name= "N_2(t): Number of successes at t") +
-  # scale_x_continuous(name= "Time t")
+    ylab("combined") +
+    xlab("Time t (intervals)") +
+    scale_shape_manual(values=c(16, 17))+
+    scale_color_manual(values=c('blue','orange')) +
+    theme(legend.position="none")
   
-  grid.arrange(p1, p2, nrow=2)
+  grid.arrange(p1, p2, p3, nrow=3)
 }
 
 pois.2()
@@ -447,18 +477,9 @@ generate_mvn_plot <- function(N=100) {
     scale_color_manual(breaks = c("BLUE", "ORANGE"),
                        values=c("blue", "orange"))
   g
-
-  
 }
 
 generate_mvn_plot()
 ```
-
-
-
-
-
-
-
 
 

@@ -1,0 +1,58 @@
+---
+title: "Useful_Stats_Facts"
+author: "technicalelvis.com"
+date: "7/15/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+# Birthday Problem
+The following plot show the probability of at least one birthday match
+as a function of k. The first value of k for which the probability of
+a match exceeds 0.5 is k=23. Thus, in a group of 23 people, there is a better than 50% chance that two or more of them will have the same birthday. By the time we reach k = 57, the probability of a match exceeds 99%.
+
+```{r birthday, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
+binom_prob <- function(k){1-prod((365-k+1):365)/(365^k)}
+
+chap1.1 <- function() {
+  k <- 1:100
+  p <- sapply(k, binom_prob)
+  
+  df <- data.frame(k=k, p=p)
+  g <- ggplot(df, aes(x=k, y=p)) +
+    geom_point() +
+    xlab("k") + ylab("probability of a birthday match") +
+    geom_hline(yintercept=0.50, linetype="dashed", color = "red") +
+    theme(plot.title = element_text(hjust = 0.5)) +
+    labs(title="Probability that in a room of k people, \nat least two were born on the same day.")
+  g
+}
+
+chap1.1()
+```
+
+For a quick intuition intho why it should not be so surprising, note that with 23 people there are ${23 \choose 2} = 253$ pairs of people, any of which could be a birthday match.
