@@ -7,8 +7,7 @@ output:
     theme: cosmo
     keep_md: true
     pandoc_args: [
-      "-o", "index.html",
-      "-o", "README.md"
+      "-o", "index.html"
     ]
 
 
@@ -18,7 +17,6 @@ fig_height: 3
 
 
 
-NOTE: [Click here to view the github page for this repo](https://telvis07.github.io/stats/)
 
 ## Common Probability Distributions
 
