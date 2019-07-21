@@ -6,16 +6,20 @@ output:
     toc: true
     theme: cosmo
     keep_md: true
-    pandoc_args: [
-      "-o", "index.html"
-    ]
-
 
 fig_width: 5 
 fig_height: 3 
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 
+library(ggplot2)
+library(knitr)
+library(ggplot2)
+library(gridExtra)
+library(mvtnorm)
+```
 
 
 ## Common Probability Distributions
@@ -28,7 +32,7 @@ This document lists common probability distributions described in [Introduction 
 
 The cumulative distribution answers questions like: 
 
-* "probability a person's height equals 4 feet __or shorter__"
+* "probability a person's height equals 4 feet __or greater__"
 * "probability a cookie has __at least__ 10 chocolate chips"
 * "probability a shopping cart has 3 items __or greater__". 
 
@@ -43,25 +47,66 @@ The __emphasized__ phrases indicate we want the slice of the population that exa
 
 ### Setting lower.tail parameter in R
 
-Strictly speaking, the cumulative distribution shows the percentage of the population that lies below some target value (i.e. percentile). Generally you usually want `1 minus cumulative distribution`, which tells the percentage of the population
-that lies in the range of interest. The distribution functions in `R` have a `lower.tail` option for this purpose. Set `lower.tail = FALSE` to get `1 - cumulative distribution` or set it to `TRUE` to get the default behavior.
+The `R` distribution functions (eg. pbinom, ppois, pnorm, etc.) have a `lower.tail` option to get the range above or below a threshold. 
+
+* Set `lower.tail = FALSE` to get the population percentage __above__ a threshold.
+* Set `lower.tail = TRUE` to get the population percentage __below__ a threshold.
+
+
+### Distribution vs Density
+
+In general, the term `distribution` is used to describe statistics on discrete variables (eg. item counts, customer counts, etc). The `density` applies to 
+continuous variables that can take any value from $-inf$ to $+inf$ (eg. heights, weights, etc. )
 
 
 ## Binomial
-Suppose that _n_ independent Bernoulli trials are performed, each with the same success probability p. Let
-_X_ be the number of successes. The distribution of X is called a _Binomial distribution_. 
+Suppose that _n_ independent coin flips (ie. Bernoulli trials) are performed, each with the same success probability p. Let
+_X_ be the number of HEADS (ie. successes). The distribution of X is called a _Binomial distribution_. 
 
 ### Binomial Density
-The plot shows the probability of getting *exactly* _x_ HEADS in 10 coin flips where the probability of HEADS is 20%.
+The plot shows the probability of getting *exactly* _x_ HEADS in 10 biased coin flips where the probability of HEADS is 20%.
 
-<img src="stats-101-book-summary_files/figure-html/dbinom-1.png" style="display: block; margin: auto;" />
+```{r dbinom, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
+chap3.1 <- function(){
+  # Prob x=1:5 where X ~ Bin(5, 0.2)
+  x <- 1:10
+  y <- dbinom(x, 10, 0.2)
+  
+  df <- data.frame(x=x, y=y)
+  g <- ggplot(df, aes(x=x, y=y)) +
+    geom_point() +
+    scale_x_discrete(name="x", limits=x) +
+    geom_linerange(aes(x=x, ymax=y, ymin=0)) +
+    theme(plot.title = element_text(hjust = 0.5)) +
+    labs(title="Binomial Density")
+  g
+}
+chap3.1()
+```
 
 
 ### Binomial Cumulative distribution
 
-The plot shows the probability of getting *less than* _x_ HEADS in 10 coin flips where the probability of HEADS is 20%.
+The plot shows the probability of getting _x_ HEADS or greater in 10 coin flips where the probability of HEADS is 20%.
 
-<img src="stats-101-book-summary_files/figure-html/pbinom-1.png" style="display: block; margin: auto;" />
+```{r pbinom, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
+chap3.2 <- function(){
+  # Prob x<1:10 where X ~ Bin(5, 0.2)
+  x <- 1:10
+  y <- pbinom(x, 10, 0.2, lower.tail = F)
+
+  df <- data.frame(x=x, y=y)
+  g <- ggplot(df, aes(x=x, y=y)) +
+    geom_line() +
+    scale_x_discrete(name="x", limits=x) +
+    ylab("y") +
+    theme(plot.title = element_text(hjust = 0.5)) +
+    labs(title="Binomial Cumulative Density")
+  g
+
+}
+chap3.2()
+```
 
 
 ## Hypergeometric
@@ -74,13 +119,56 @@ _Hypergeometric distribution_ with parameters a, b and n; we denote this by _X ~
 
 The plot shows the probability of having *exactly* 1, 2, 3, or 4 aces in a 5 card hand from a deck with 52 cards.
 
-<img src="stats-101-book-summary_files/figure-html/dhyper-1.png" style="display: block; margin: auto;" />
+```{r dhyper, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
+
+chap3.3 <- function() {
+  # Prob x=1:4 where X ~ HyperGeom(4, 48, 5)
+  # from a deck with 
+  # - 1:4 aces
+  # - 48 non aces
+  # - choose 5 cards per hand
+  x <- 1:4
+  y <- dhyper(x, 4, 48, 5)
+  df <- data.frame(x=x, y=y)
+  g <- ggplot(df, aes(x=x, y=y)) +
+    geom_point() +
+    geom_linerange(aes(x=x, ymax=y, ymin=0)) +
+    scale_x_discrete(name="x", limits=x) +
+    ylab("y") +
+    theme(plot.title = element_text(hjust = 0.5)) +
+    labs(title="Hypergeometric Density")
+  g
+}
+
+chap3.3()
+```
 
 ### Hypergeometric Cumulative Distribution
 
-The plot shows the probability of having *less than* 1, 2, 3, or 4 aces in a 5 card hand from a deck containing 52 cards.
+The plot shows the probability of having _x_ aces *or greater* in a 5 card hand from a deck containing 52 cards.
 
-<img src="stats-101-book-summary_files/figure-html/phyper-1.png" style="display: block; margin: auto;" />
+```{r phyper, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
+
+chap3.4 <- function() {
+  # Prob x=1:4 where X ~ HyperGeom(4, 48, 5)
+  # from a deck with 
+  # - 1:4 aces
+  # - 48 non aces
+  # - choose 5 cards per hand
+  x <- 1:4
+  y <- phyper(x, 4, 48, 5, lower.tail = F)
+  df <- data.frame(x=x, y=y)
+  g <- ggplot(df, aes(x=x, y=y)) +
+    geom_line() +
+    scale_x_discrete(name="x", limits=x) +
+    ylab("y") +
+    theme(plot.title = element_text(hjust = 0.5)) +
+    labs(title="Hypergeometric Cumulative Distribution")
+  g
+}
+
+chap3.4()
+```
 
 
 ## Uniform
@@ -89,15 +177,42 @@ A uniform r.v. on the interval (a,b) is a completely random number between _a_ a
 
 ### Uniform Density
 
-The following plot shows the probability that `Unif(0,1)` is *less than or equal* to any value between -0.5 and +1.5.
+The following plot shows the probability that `Unif(0,1)` *equals* any value between -0.5 and +1.5.
 
-<img src="stats-101-book-summary_files/figure-html/dunif-1.png" style="display: block; margin: auto;" />
+```{r dunif, echo=F, fig.width=6, fig.height=4, fig.align="center"}
+do_dunif <- function() {
+  # PDF
+  x <- seq(-0.5, 1.5, 1/10000)
+  y <- dunif(x, 0, 1)
+  datums <- data.frame(x=x, y=y)
+  obj <- ggplot(datums, aes(x=x, y=y)) + 
+    labs(title="Uniform Density") +
+    geom_line()
+  obj
+}
+
+do_dunif()
+```
 
 ### Uniform Cumulative Distribution
 
-The following plot shows the probability that `Unif(0,1)` is *exactly equals* any value between -0.5 and +1.5.
+The following plot shows the probability that `Unif(0,1)` is *equal to or greater than* any value between -0.5 and +1.5. For example, there is a `25%` probablity of getting a value `0.75 or greater`.
 
-<img src="stats-101-book-summary_files/figure-html/punif-1.png" style="display: block; margin: auto;" />
+```{r punif, echo=F, fig.width=6, fig.height=4, fig.align="center"}
+do_punif <- function() {
+  # PDF
+  x <- seq(-0.5, 1.5, 1/10000)
+  y <- punif(x, 0, 1, lower.tail = F)
+  datums <- data.frame(x=x, y=y)
+  obj <- ggplot(datums, aes(x=x, y=y)) + 
+    labs(title="Uniform Cumulative Distribution") +
+    geom_line()
+
+    obj
+}
+
+do_punif()
+```
 
 
 
@@ -109,15 +224,57 @@ $\lambda$ could be 20 (emails per hour), 10 (chips per cookie), and 2 (earthquak
 
 ### Poisson Density
 Consider an example where the number of people that show up at a bus stop is Poisson with a mean of 2.5 per hour. If watching the bus stop for 1 hours, what is the 
-probability that exactly $3$ people show up for the whole time?
+probability that exactly $x$ people show up for the whole time?
 
-<img src="stats-101-book-summary_files/figure-html/dpois-1.png" style="display: block; margin: auto;" />
+```{r dpois, echo=F,  fig.width=6, fig.height=4, fig.align = "center"}
+chap3.poisson.story.dpois <- function(num_success=3, rate=2.5, interval=1) {
+  # Notice the multiplication by four in the function argument. Since lambda is specified as 
+  # events per hour we have to multiply by four to consider the number of events that occur in 4 hours.
+  lambda <- rate * interval
+  x <- 1:10
+  df <- data.frame(x=x)
+  
+  df['y'] <- dpois(x, lambda)
+  p <- ggplot(df, aes(x=x, y=y)) +
+       geom_point() +
+       geom_linerange(aes(x=x, ymax=y, ymin=0)) +
+       scale_x_discrete(name="x", limits=x) +
+       ylab("y") +
+       theme(plot.title = element_text(hjust = 0.5)) +
+       labs(title="Poisson Density")
+  
+  p
+}
+
+chap3.poisson.story.dpois()
+```
 
 
 ### Poisson Cumulative Distribution
-For the previous example, what is the probability that $3$ or fewer people show up for the whole time?
+For the previous example, what is the probability that $x$ or more people show up for the whole time?
 
-<img src="stats-101-book-summary_files/figure-html/ppois-1.png" style="display: block; margin: auto;" />
+```{r ppois, echo=F,  fig.width=6, fig.height=4, fig.align = "center"}
+chap3.poisson.story.ppois <- function(num_success=3, rate=2.5, interval=1) {
+  # Notice the multiplication by four in the function argument. Since lambda is specified as 
+  # events per hour we have to multiply by four to consider the number of events that occur in 4 hours.
+  lambda <- rate * interval
+  x <- 0:10
+  df <- data.frame(x=x)
+  
+  df['y'] <- ppois(x, lambda, lower.tail = F)
+  p <- ggplot(df, aes(x=x, y=y)) +
+    geom_line() +
+    scale_x_discrete(name="x", limits=x) +
+    labs(y="y") + 
+    labs(x="x: number of events") +
+    labs(title="Poisson Cumulative Distribution")
+    
+  
+  p
+}
+
+chap3.poisson.story.ppois()
+```
 
 ### Simulating a Poisson Process containing 1 event type
 The following example illustrates how to simulate arrival times within a specified interval $(0,L]$. 
@@ -127,8 +284,7 @@ The following example illustrates how to simulate arrival times within a specifi
 
 The following code simulates arrivals from a Poisson process with rate 10 events/interval after observing for 5 intervals.
 
-
-```r
+```{r poisson1, echo=T, fig.width=6, fig.height=4, fig.align="center"}
 pois.1 <- function() {
 
   # 5 intervals
@@ -158,8 +314,6 @@ pois.1 <- function() {
 pois.1()
 ```
 
-<img src="stats-101-book-summary_files/figure-html/poisson1-1.png" style="display: block; margin: auto;" />
-
 ### Simulating a Poisson Process containing 2 event types
 
 Now, let's build on the previous example to model a Poisson process that contains 2 event types.
@@ -170,8 +324,7 @@ Now, let's build on the previous example to model a Poisson process that contain
   
 The resulting vectors of arrival times t1 and t2 are realizations of 2 independent Poisson processes.
 
-
-```r
+```{r poisson2, echo=T, fig.width=6, fig.height=4, fig.align="center"}
 pois.2 <- function() {
   
   # 5 intervals
@@ -240,8 +393,6 @@ pois.2 <- function() {
 pois.2()
 ```
 
-<img src="stats-101-book-summary_files/figure-html/poisson2-1.png" style="display: block; margin: auto;" />
-
 ## Gaussian
 
 The Normal distribution is a famous continuous distribution with a bell-shaped PDF. It is extremely widely used in statistics because of a theorem,
@@ -252,17 +403,46 @@ The simplest normal distribution is the _standard normal_, which is centered at 
 
 ### Gaussian Density
 
-The following plot shows the probability that `Normal(0,1)` is *less than or equal* to any value between -3 and +3.
+The following plot shows the probability that `Normal(0,1)` *exactly equals* any value between -3 and +3.
+
  
-<img src="stats-101-book-summary_files/figure-html/dnorm-1.png" style="display: block; margin: auto;" />
+```{r dnorm, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
+ do_dnorm <- function() {
+ x <- seq(-3, 3, 0.01)
+ y <- dnorm(x)
+ datums <- data.frame(x=x, y=y)
+ g <- ggplot(datums, aes(x, y)) + geom_line() + 
+ theme(plot.title = element_text(hjust = 0.5)) +
+ scale_x_discrete(name="x", limits=seq(-3, 3, 1)) +
+ labs(title="Normal Density")
+ 
+ g
+}
+ 
+do_dnorm()
+```
 
 
 ### Gaussian Cumulative Distribution
 
-The following plot shows the probability that `Normal(0,1)` *exactly equals* any value between -3 and +3.
+The following plot shows the probability that `Normal(0,1)` is *greater than or equal* to any value between -3 and +3.
+
  
 
-<img src="stats-101-book-summary_files/figure-html/pnorm-1.png" style="display: block; margin: auto;" />
+```{r pnorm, echo=F, fig.width=6, fig.height=4, fig.align="center"}
+do_pnorm <- function() {
+   # x <- seq(0, 1, 0.001)
+   x <- seq(-3, 3, 0.01)
+   y <- pnorm(x, lower.tail = F)
+   df <- data.frame(x=x, y=y)
+   ggplot(df, aes(x=x, y=y)) + geom_line() +
+     theme(plot.title = element_text(hjust = 0.5)) +
+     scale_x_discrete(name="x", limits=seq(-3, 3, 1)) +
+     labs(title="Normal Cumulative Distribution")
+}
+
+do_pnorm()
+```
 
 
 ### Multivariate Normal
@@ -276,8 +456,7 @@ row _i_, column _j_ entry is Cov($X_i, X_j$).
 The following plot shows random variables from 2 bivariate normals: `BLUE` and `ORANGE`. The `BLUE` distribution has parameters
 $N((1,0)^T, I)$. The `ORANGE` distribution has parameters $N((0,1)^T, I)$. **I** represents a 2x2 identity matrix - where the diagonals are `1` and other values are `0`.
 
-
-```r
+```{r mvnplot, echo=T, fig.width=6, fig.height=4, fig.align = "center"}
 do_mvtnorm <- function(mu1, mu2, s1=1, s2=1, rho_0=0, N=10) {
   # dvmnorm can be used for calculating the joing PDF and rmvnorm can be used for 
   # generating random vectors.
@@ -325,7 +504,5 @@ generate_mvn_plot <- function(N=100) {
 
 generate_mvn_plot()
 ```
-
-<img src="stats-101-book-summary_files/figure-html/mvnplot-1.png" style="display: block; margin: auto;" />
 
 
