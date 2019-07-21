@@ -1,0 +1,126 @@
+---
+title: "extra"
+author: "technicalelvis.com"
+date: "7/21/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(knitr)
+library(ggplot2)
+library(gridExtra)
+library(mvtnorm)
+```
+
+## Hypergeometric
+
+Consider a playing cards example with _a_ aces and _b_ non-aces (ie. the 48 other cards that are not aces). We draw _n_ cards out of the deck at random without replacement, such that 
+${a + b \choose n}$ cards are equally likely. Let _X_ be the number of aces in the in your hand after drawing _n_ cards. _X_ is said to have the
+_Hypergeometric distribution_ with parameters a, b and n; we denote this by _X ~ HGeom(a,b,n)_.
+
+### Hypergeometric Density
+
+The plot shows the probability of having *exactly* 1, 2, 3, or 4 aces in a 5 card hand from a deck with 52 cards.
+
+```{r dhyper, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
+
+chap3.3 <- function() {
+  # Prob x=1:4 where X ~ HyperGeom(4, 48, 5)
+  # from a deck with 
+  # - 1:4 aces
+  # - 48 non aces
+  # - choose 5 cards per hand
+  x <- 1:4
+  y <- dhyper(x, 4, 48, 5)
+  df <- data.frame(x=x, y=y)
+  g <- ggplot(df, aes(x=x, y=y)) +
+    geom_point() +
+    geom_linerange(aes(x=x, ymax=y, ymin=0)) +
+    scale_x_discrete(name="x", limits=x) +
+    ylab("y") +
+    theme(plot.title = element_text(hjust = 0.5)) +
+    labs(title="Hypergeometric Density")
+  g
+}
+
+chap3.3()
+```
+
+### Hypergeometric Cumulative Distribution
+
+The plot shows the probability of having more than _x_ aces in a 5 card hand from a deck containing 52 cards.
+
+```{r phyper, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
+
+chap3.4 <- function() {
+  # Prob x=1:4 where X ~ HyperGeom(4, 48, 5)
+  # from a deck with 
+  # - 1:4 aces
+  # - 48 non aces
+  # - choose 5 cards per hand
+  x <- 1:4
+  y <- phyper(x, 5, 48, 5, lower.tail = F)
+  df <- data.frame(x=x, y=y)
+  g <- ggplot(df, aes(x=x, y=y)) +
+    geom_line() +
+    scale_x_discrete(name="x", limits=x) +
+    ylab("y") +
+    theme(plot.title = element_text(hjust = 0.5)) +
+    labs(title="Hypergeometric Cumulative Distribution")
+  g
+}
+
+chap3.4()
+```
+
+
+## Uniform
+
+A uniform r.v. on the interval (a,b) is a completely random number between _a_ and _b_. The PDF is _constant_ over the interval. A common example of a uniform distribution is a [dice roll](http://rolladie.net/).
+
+### Uniform Density
+
+Suppose that a die is rolled and $X$ is the number face up, what the probability that the value is 1, 2, 3, 4, 5, or 6.
+
+```{r dunif, echo=F, fig.width=6, fig.height=4, fig.align="center"}
+do_dunif <- function() {
+  # PDF
+  # x <- seq(-0.5, 1.5, 1/10000)
+  x <- seq(1, 6, 1)
+  y <- dunif(x, 1, 6)
+  datums <- data.frame(x=x, y=y)
+  obj <- ggplot(datums, aes(x=x, y=y)) + 
+    labs(title="Uniform Density of Dice rolls") +
+    scale_x_discrete(name="x", limits=x) +
+    geom_bar(stat = "identity", colour = 'black', fill = "lightblue")
+  obj
+}
+
+do_dunif()
+```
+
+### Uniform Cumulative Distribution
+
+Suppose that a die is rolled and $X$ is the number face up, what the probability that the value is greater than 1, 2, 3, 4, 5, or 6.
+
+The plot shows there is a 100% prob over getting a value 1 or grea
+
+```{r punif, echo=F, fig.width=6, fig.height=4, fig.align="center"}
+do_punif <- function() {
+  # PDF
+  x <- seq(1, 6, 1)
+  y <- punif(x, 1, 7, lower.tail=F)
+  datums <- data.frame(x=x, y=y)
+  obj <- ggplot(datums, aes(x=x, y=y)) + 
+    labs(title="Uniform Cumulative Distribution") +
+    scale_x_discrete(name=x, limits=x) +
+    # geom_bar(stat = "identity", colour = 'black', fill = "lightblue")
+    geom_line()
+
+    obj
+}
+
+do_punif()
+```

@@ -75,44 +75,6 @@ The plot shows the probability of getting greater than _x_ HEADS in 10 coin flip
 <img src="index_files/figure-html/pbinom-1.png" style="display: block; margin: auto;" />
 
 
-## Hypergeometric
-
-Consider a playing cards example with _a_ aces and _b_ non-aces (ie. the 48 other cards that are not aces). We draw _n_ cards out of the deck at random without replacement, such that 
-${a + b \choose n}$ cards are equally likely. Let _X_ be the number of aces in the in your hand after drawing _n_ cards. _X_ is said to have the
-_Hypergeometric distribution_ with parameters a, b and n; we denote this by _X ~ HGeom(a,b,n)_.
-
-### Hypergeometric Density
-
-The plot shows the probability of having *exactly* 1, 2, 3, or 4 aces in a 5 card hand from a deck with 52 cards.
-
-<img src="index_files/figure-html/dhyper-1.png" style="display: block; margin: auto;" />
-
-### Hypergeometric Cumulative Distribution
-
-The plot shows the probability of having more than _x_ aces in a 5 card hand from a deck containing 52 cards.
-
-<img src="index_files/figure-html/phyper-1.png" style="display: block; margin: auto;" />
-
-
-## Uniform
-
-A uniform r.v. on the interval (a,b) is a completely random number between _a_ and _b_. The PDF is _constant_ over the interval. A common example of a uniform distribution is a [dice roll](http://rolladie.net/).
-
-### Uniform Density
-
-Suppose that a die is rolled and $X$ is the number face up, what the probability that the value is 1, 2, 3, 4, 5, or 6.
-
-<img src="index_files/figure-html/dunif-1.png" style="display: block; margin: auto;" />
-
-### Uniform Cumulative Distribution
-
-Suppose that a die is rolled and $X$ is the number face up, what the probability that the value is greater than 1, 2, 3, 4, 5, or 6.
-
-The plot shows there is a 100% prob over getting a value 1 or grea
-
-<img src="index_files/figure-html/punif-1.png" style="display: block; margin: auto;" />
-
-
 
 ## Poisson
 
