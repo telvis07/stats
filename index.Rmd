@@ -295,9 +295,9 @@ The following example illustrates how to simulate arrival times within a specifi
 1. Generate the number of arrivals $N(L)$ from $Pois(\lambda*L)$. 
 2. Conditional on $N(L) = n$, generate arrival times from ordered `Unif(O,L)`. 
 
-The following code simulates arrivals from a Poisson process with rate 10 events/interval after observing for 5 intervals.
+The following plot simulates arrivals from a Poisson process with rate 10 events/interval after observing for 5 intervals.
 
-```{r poisson1, echo=T, fig.width=6, fig.height=4, fig.align="center"}
+```{r poisson1, echo=F, fig.width=6, fig.height=4, fig.align="center"}
 pois.1 <- function() {
 
   # 5 intervals
@@ -337,7 +337,7 @@ Now, let's build on the previous example to model a Poisson process that contain
   
 The resulting vectors of arrival times t1 and t2 are realizations of 2 independent Poisson processes.
 
-```{r poisson2, echo=T, fig.width=6, fig.height=4, fig.align="center"}
+```{r poisson2, echo=F, fig.width=6, fig.height=4, fig.align="center"}
 pois.2 <- function() {
   
   # 5 intervals
@@ -441,7 +441,6 @@ do_dnorm()
 The following plot shows the probability that `Normal(0,1)` is *greater than* to any value between -3 and +3.
 
  
-
 ```{r pnorm, echo=F, fig.width=6, fig.height=4, fig.align="center"}
 do_pnorm <- function() {
    # x <- seq(0, 1, 0.001)
@@ -457,6 +456,52 @@ do_pnorm <- function() {
 do_pnorm()
 ```
 
+### Click Fraud Rate Simulation
+
+Lets' consider a [click fraud detection event analysis](https://www.kaggle.com/c/talkingdata-adtracking-fraud-detection) where 1 out of 100 ad clicks is fraudulent (ie. fraud rate is 1%).
+
+If we had a very large dataset, we could run `2000` experiments where we calculate the fraud rate of small samples. According to the [central limit theorem](https://github.com/telvis07/StatsInf_PeerAssessment1/blob/master/project.md), we can take the average fraud rate across all the experiments and be close to the actual fraud rate.
+
+
+```{r fraudrate, echo=F, fig.width=6, fig.height=4, fig.align="center"}
+fraudrate.sim <- function(p=0.1, nosim=2000, n=500) {
+  # p
+  q <- 1 - p
+  
+  # calc the means
+  mean.pop <- p
+  
+  # calc the variance
+  var.pop <- p*q
+  
+  # Generate simulated data
+  rbin_samples <- matrix(rbinom(n*nosim, 1, prob = p), nosim, n) 
+  
+  # Calc sample means for the 1000 simulations
+  rbin_samples_means <- matrix(apply(rbin_samples, 1, mean))
+  
+  rbin_samples_means
+}
+
+avgs_across_coin_flips <- function(nosim=100) {
+  df <- data.frame(
+    x = c(fraudrate.sim(p=0.1, nosim=nosim, n=10),
+          fraudrate.sim(p=0.1, nosim=nosim, n=100),
+          fraudrate.sim(p=0.1, nosim=nosim, n=200),
+          fraudrate.sim(p=0.1, nosim=nosim, n=500)),
+    size = factor(rep(c(10, 100, 200, 500), rep(nosim, 4)))
+  )
+  
+  g <- ggplot(df, aes(x=x, fill=size)) +
+       geom_histogram(alpha=0.20, bins=20, color="black") +
+       facet_grid(. ~ size)    
+  g
+}
+
+avgs_across_coin_flips()
+```
+
+The plot above shows a histogram of the fraud rates for each sample. We try sizes of 10, 100, 200 and 500 samples. Notice that as the sample size grows, the distribution gets Gaussian looking (like a bell curve) and increasinsly centered at 0.01 (1%).
 
 ### Multivariate Normal
 
@@ -469,7 +514,7 @@ row _i_, column _j_ entry is Cov($X_i, X_j$).
 The following plot shows random variables from 2 bivariate normals: `BLUE` and `ORANGE`. The `BLUE` distribution has parameters
 $N((1,0)^T, I)$. The `ORANGE` distribution has parameters $N((0,1)^T, I)$. **I** represents a 2x2 identity matrix - where the diagonals are `1` and other values are `0`.
 
-```{r mvnplot, echo=T, fig.width=6, fig.height=4, fig.align = "center"}
+```{r mvnplot, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
 do_mvtnorm <- function(mu1, mu2, s1=1, s2=1, rho_0=0, N=10) {
   # dvmnorm can be used for calculating the joing PDF and rmvnorm can be used for 
   # generating random vectors.

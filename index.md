@@ -138,38 +138,7 @@ The following example illustrates how to simulate arrival times within a specifi
 1. Generate the number of arrivals $N(L)$ from $Pois(\lambda*L)$. 
 2. Conditional on $N(L) = n$, generate arrival times from ordered `Unif(O,L)`. 
 
-The following code simulates arrivals from a Poisson process with rate 10 events/interval after observing for 5 intervals.
-
-
-```r
-pois.1 <- function() {
-
-  # 5 intervals
-  L <- 5
-  
-  # 10 events / interval
-  lambda <- 10
-  
-  # randomly generate number of events using pois(lambda*L)
-  n <- rpois(1, lambda*L)
-  
-  # generate random "times" from 0 through L for "n" events, then sort them
-  t <- sort(runif(n, 0, L))
-  
-  # visualize L events. 
-  # x=times each n event occurs
-  # y=event index
-  df <- data.frame(x=t, y=1:n)
-  g <- ggplot(df, aes(x=x, y=y) ) +
-    geom_point() +     
-    scale_y_continuous(name= "N(t): Number of successes at t") +
-    scale_x_continuous(name= "Time t (intevals)")
-  
-  g
-}
-
-pois.1()
-```
+The following plot simulates arrivals from a Poisson process with rate 10 events/interval after observing for 5 intervals.
 
 <img src="index_files/figure-html/poisson1-1.png" style="display: block; margin: auto;" />
 
@@ -182,76 +151,6 @@ Now, let's build on the previous example to model a Poisson process that contain
 3. For each arrival, we flip a coin with probability `Bern(0.3)` of Heads; these coin tosses are labeled as `type-1`; the rest are labeled as `type-2`. 
   
 The resulting vectors of arrival times t1 and t2 are realizations of 2 independent Poisson processes.
-
-
-```r
-pois.2 <- function() {
-  
-  # 5 intervals
-  L <- 5
-  
-  # 10 events/interval
-  lambda <- 10
-  
-  # randomly generate number of events using pois(lambda*L)
-  n <- rpois(1, lambda*L)
-  
-  # generate random "times" from 0 through L for "n" events, then sort them
-  t <- sort(runif(n, 0, L))
-  
-  # type-1 event probabilty: p=0.3
-  p <- 0.3
-  y <- rbinom(n, 1, p)
-  
-  # assign "event times" as type-1 or type-2 
-  t1 <- t[y==1]
-  t2 <- t[y==0]
-  
-  # as before, we can plot the number of arrivals in each Poisson process: N_1(t) and N_2(t).
-  
-  # visualize the plot for type #1 events
-  df1 <- data.frame(x=t1, y=1:length(t1))
-  p1 <- ggplot(df1, aes(x=x, y=y) ) +
-    geom_point(shape=16, color="blue")  +
-    theme(
-          axis.ticks.y=element_blank()) +
-  ylab("type1: count") +
-    theme(axis.title.x=element_blank(),
-        axis.text.x=element_blank(),
-        axis.ticks.x=element_blank())
-  
-  # visualize the plot for type #2 events
-  df2 <- data.frame(x=t2, y=1:length(t2))
-  p2 <- ggplot(df2, aes(x=x, y=y) ) +
-    geom_point(shape=17, color="orange")  +
-    theme(
-          axis.ticks.y=element_blank()) +
-    ylab("type2: count") +
-      theme(axis.title.x=element_blank(),
-        axis.text.x=element_blank(),
-        axis.ticks.x=element_blank())
-  
-  # visualize the plot for both event types
-  df1$event_type <- "type-1"
-  df2$event_type <- "type-2"
-  df3 <- rbind(df1, df2)
-  df3$y <- 1:length(t)
-  
-  p3 <- ggplot(df3, aes(x=x, y=y, color=event_type) ) +
-    geom_point()  +
-    theme(
-          axis.ticks.y=element_blank()) +
-    ylab("combined") +
-    xlab("Time t (intervals)") +
-    scale_shape_manual(values=c(16, 17))+
-    scale_color_manual(values=c('blue','orange')) +
-    theme(legend.position="none")
-  
-  grid.arrange(p1, p2, p3, nrow=3)
-}
-
-pois.2()
-```
 
 <img src="index_files/figure-html/poisson2-1.png" style="display: block; margin: auto;" />
 
@@ -276,9 +175,18 @@ The following plot shows the probability that `Normal(0,1)` *exactly equals* any
 The following plot shows the probability that `Normal(0,1)` is *greater than* to any value between -3 and +3.
 
  
-
 <img src="index_files/figure-html/pnorm-1.png" style="display: block; margin: auto;" />
 
+### Click Fraud Rate Simulation
+
+Lets' consider a [click fraud detection event analysis](https://www.kaggle.com/c/talkingdata-adtracking-fraud-detection) where 1 out of 100 ad clicks is fraudulent (ie. fraud rate is 1%).
+
+If we had a very large dataset, we could run `2000` experiments where we calculate the fraud rate of small samples. According to the [central limit theorem](https://github.com/telvis07/StatsInf_PeerAssessment1/blob/master/project.md), we can take the average fraud rate across all the experiments and be close to the actual fraud rate.
+
+
+<img src="index_files/figure-html/fraudrate-1.png" style="display: block; margin: auto;" />
+
+The plot above shows a histogram of the fraud rates for each sample. We try sizes of 10, 100, 200 and 500 samples. Notice that as the sample size grows, the distribution gets Gaussian looking (like a bell curve) and increasinsly centered at 0.01 (1%).
 
 ### Multivariate Normal
 
@@ -290,56 +198,6 @@ row _i_, column _j_ entry is Cov($X_i, X_j$).
 
 The following plot shows random variables from 2 bivariate normals: `BLUE` and `ORANGE`. The `BLUE` distribution has parameters
 $N((1,0)^T, I)$. The `ORANGE` distribution has parameters $N((0,1)^T, I)$. **I** represents a 2x2 identity matrix - where the diagonals are `1` and other values are `0`.
-
-
-```r
-do_mvtnorm <- function(mu1, mu2, s1=1, s2=1, rho_0=0, N=10) {
-  # dvmnorm can be used for calculating the joing PDF and rmvnorm can be used for 
-  # generating random vectors.
-  meanvector <- c(mu1,mu2)
-
-  # The covariance matrix is (assuming sd(Z)=s1=1, sd(W)=s2=1)
-  # [(1, rho), (rho, 1)]
-  # because:
-  # Cov(Z, Z) = Var(Z) = 1 (this is the upper left entry)
-  # Cov(W, W) = Var(W) = 1 (this is the lower right entry)
-  # Cov(Z, W) = Corr(Z,W) * sd(Z) * sd(W) = rho 
-  # 
-  # NOTE (if rho_0=1, then covmatrix equals IDENTITY matrix(c(1, 0, 0, 1), 2))
-  covmatrix = matrix(c(s1^2, s1*s2*rho_0, s1*s2*rho_0, s2^2), nrow=2, ncol=2)
-
-  # now r  is N x 2 matrix, with each row a BVN random vector. 
-  r <- rmvnorm(n=N, mean=meanvector, sigma=covmatrix)
-
-  r
-}
-
-generate_mvn_plot <- function(N=100) {
-  # N((1,0)^T, I) labeled class 'BLUE'
-  bvn1 <- do_mvtnorm(mu1=1, mu2=0, s1=1, s2=1, rho_0=0, N=N)
-  df1 <- data.frame(bvn1)
-  colnames(df1) <- c("x1", "x2")
-  df1["label"] = "BLUE"
-
-  # N((0,1)T, I) labeled class 'ORANGE'
-  bvn2 <- do_mvtnorm(mu1=0, mu2=1, s1=1, s2=1, rho_0=0,  N=N)
-  df2 <- data.frame(bvn2)
-  colnames(df2) <- c("x1", "x2")
-  df2["label"] = "ORANGE"
-
-  # stack the dataframes
-  df <- rbind(df1, df2)
-
-  # Plot BLUE vs ORANGE
-  g <- ggplot(df, aes(x=x1, y=x2, color=label)) +
-    geom_point() +
-    scale_color_manual(breaks = c("BLUE", "ORANGE"),
-                       values=c("blue", "orange"))
-  g
-}
-
-generate_mvn_plot()
-```
 
 <img src="index_files/figure-html/mvnplot-1.png" style="display: block; margin: auto;" />
 
