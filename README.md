@@ -2,5 +2,5 @@
 
 [Click here to view the github page](https://telvis07.github.io/stats/)
 
-This document lists common probability distributions described in [Introduction to Probability by Joseph Blizstein and Jessica Hwang](https://drive.google.com/file/d/1VmkAAGOYCTORq1wxSQqy255qLJjTNvBI/view).
+This document contains notes from topics covered in various introductory statistics books. It serves mostly as a "stats refresher" for me. :-)
 

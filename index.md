@@ -96,7 +96,7 @@ The plot shows the probability of having more than _x_ aces in a 5 card hand fro
 
 ## Uniform
 
-A uniform r.v. on the interval (a,b) is a completely random number between _a_ and _b_. The PDF is _constant_ over the interval.
+A uniform r.v. on the interval (a,b) is a completely random number between _a_ and _b_. The PDF is _constant_ over the interval. A common example of a uniform distribution is a [dice roll](http://rolladie.net/).
 
 ### Uniform Density
 
@@ -107,6 +107,8 @@ Suppose that a die is rolled and $X$ is the number face up, what the probability
 ### Uniform Cumulative Distribution
 
 Suppose that a die is rolled and $X$ is the number face up, what the probability that the value is greater than 1, 2, 3, 4, 5, or 6.
+
+The plot shows there is a 100% prob over getting a value 1 or grea
 
 <img src="index_files/figure-html/punif-1.png" style="display: block; margin: auto;" />
 

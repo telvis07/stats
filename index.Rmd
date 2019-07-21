@@ -76,7 +76,7 @@ The plot shows the probability of getting *exactly* _x_ HEADS in 10 biased coin 
 ```{r dbinom, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
 chap3.1 <- function(){
   # Prob x=1:5 where X ~ Bin(5, 0.2)
-  x <- 1:10
+  x <- seq(1, 10, 1)
   y <- dbinom(x, 10, 0.2)
   
   df <- data.frame(x=x, y=y)
@@ -163,7 +163,7 @@ chap3.4 <- function() {
   # - 48 non aces
   # - choose 5 cards per hand
   x <- 1:4
-  y <- phyper(x, 4, 48, 5, lower.tail = F)
+  y <- phyper(x, 5, 48, 5, lower.tail = F)
   df <- data.frame(x=x, y=y)
   g <- ggplot(df, aes(x=x, y=y)) +
     geom_line() +
@@ -207,11 +207,13 @@ do_dunif()
 
 Suppose that a die is rolled and $X$ is the number face up, what the probability that the value is greater than 1, 2, 3, 4, 5, or 6.
 
+The plot shows there is a 100% prob over getting a value 1 or grea
+
 ```{r punif, echo=F, fig.width=6, fig.height=4, fig.align="center"}
 do_punif <- function() {
   # PDF
   x <- seq(1, 6, 1)
-  y <- punif(x, 1, 6, lower.tail=F)
+  y <- punif(x, 1, 7, lower.tail=F)
   datums <- data.frame(x=x, y=y)
   obj <- ggplot(datums, aes(x=x, y=y)) + 
     labs(title="Uniform Cumulative Distribution") +
