@@ -1,5 +1,5 @@
 ---
-title: "Stats 101: Common Probability Distributions"
+title: "Stats 101"
 author: "technicalelvis.com"
 output: 
   html_document:
@@ -24,7 +24,14 @@ library(mvtnorm)
 
 ## Common Probability Distributions
 
-This document lists common probability distributions described in [Introduction to Probability by Joseph Blizstein and Jessica Hwang](https://drive.google.com/file/d/1VmkAAGOYCTORq1wxSQqy255qLJjTNvBI/view). For each distribution, we show both the _probability density_ and _cumulative distribution_ plots. 
+This document lists common probability distributions described in
+
+* [Introduction to Probability by Joseph Blizstein and Jessica Hwang](https://drive.google.com/file/d/1VmkAAGOYCTORq1wxSQqy255qLJjTNvBI/view). 
+
+* [Little Inference Book by Brian Caffo](https://leanpub.com/LittleInferenceBook)
+
+
+For each distribution, we show both the _probability density_ and _cumulative distribution_ plots. 
 
 **Probability density** plots show the probability that a random variable $X$ equals some value $x$; expressed using the notation: $P(X=x)$. 
 
@@ -32,9 +39,9 @@ This document lists common probability distributions described in [Introduction 
 
 The cumulative distribution answers questions like: 
 
-* "probability a person's height equals 4 feet __or greater__"
-* "probability a cookie has __at least__ 10 chocolate chips"
-* "probability a shopping cart has 3 items __or greater__". 
+* "probability a person's height is __greater than__ 4 feet"
+* "probability a cookie has __less than__ 10 chocolate chips"
+* "probability a shopping cart has __greater than__ 3 items". 
 
 The __emphasized__ phrases indicate we want the total population with a value in a certain range. 
 This contrasts with probability density, that answers questions like:
@@ -87,7 +94,7 @@ chap3.1()
 
 ### Binomial Cumulative distribution
 
-The plot shows the probability of getting _x_ HEADS or greater in 10 coin flips where the probability of HEADS is 20%.
+The plot shows the probability of getting greater than _x_ HEADS in 10 coin flips where the probability of HEADS is 20%.
 
 ```{r pbinom, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
 chap3.2 <- function(){
@@ -145,7 +152,7 @@ chap3.3()
 
 ### Hypergeometric Cumulative Distribution
 
-The plot shows the probability of having _x_ aces *or greater* in a 5 card hand from a deck containing 52 cards.
+The plot shows the probability of having more than _x_ aces in a 5 card hand from a deck containing 52 cards.
 
 ```{r phyper, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
 
@@ -173,21 +180,23 @@ chap3.4()
 
 ## Uniform
 
-A uniform r.v. on the interval (a,b) is a completely random number between _a_ and _b_. The PDF is _constant_ over the interval.
+A uniform r.v. on the interval (a,b) is a completely random number between _a_ and _b_. The PDF is _constant_ over the interval. A common example of a uniform distribution is a [dice roll](http://rolladie.net/).
 
 ### Uniform Density
 
-The following plot shows the probability that `Unif(0,1)` *equals* any value between -0.5 and +1.5.
+Suppose that a die is rolled and $X$ is the number face up, what the probability that the value is 1, 2, 3, 4, 5, or 6.
 
 ```{r dunif, echo=F, fig.width=6, fig.height=4, fig.align="center"}
 do_dunif <- function() {
   # PDF
-  x <- seq(-0.5, 1.5, 1/10000)
-  y <- dunif(x, 0, 1)
+  # x <- seq(-0.5, 1.5, 1/10000)
+  x <- seq(1, 6, 1)
+  y <- dunif(x, 1, 6)
   datums <- data.frame(x=x, y=y)
   obj <- ggplot(datums, aes(x=x, y=y)) + 
-    labs(title="Uniform Density") +
-    geom_line()
+    labs(title="Uniform Density of Dice rolls") +
+    scale_x_discrete(name="x", limits=x) +
+    geom_bar(stat = "identity", colour = 'black', fill = "lightblue")
   obj
 }
 
@@ -196,16 +205,18 @@ do_dunif()
 
 ### Uniform Cumulative Distribution
 
-The following plot shows the probability that `Unif(0,1)` is *equal to or greater than* any value between -0.5 and +1.5. For example, there is a `25%` probablity of getting a value `0.75 or greater`.
+Suppose that a die is rolled and $X$ is the number face up, what the probability that the value is greater than 1, 2, 3, 4, 5, or 6.
 
 ```{r punif, echo=F, fig.width=6, fig.height=4, fig.align="center"}
 do_punif <- function() {
   # PDF
-  x <- seq(-0.5, 1.5, 1/10000)
-  y <- punif(x, 0, 1, lower.tail = F)
+  x <- seq(1, 6, 1)
+  y <- punif(x, 1, 6, lower.tail=F)
   datums <- data.frame(x=x, y=y)
   obj <- ggplot(datums, aes(x=x, y=y)) + 
     labs(title="Uniform Cumulative Distribution") +
+    scale_x_discrete(name=x, limits=x) +
+    # geom_bar(stat = "identity", colour = 'black', fill = "lightblue")
     geom_line()
 
     obj
@@ -251,7 +262,7 @@ chap3.poisson.story.dpois()
 
 
 ### Poisson Cumulative Distribution
-For the previous example, what is the probability that $x$ or more people show up for the whole time?
+For the previous example, what is the probability that more than $x$ people show up for the whole time?
 
 ```{r ppois, echo=F,  fig.width=6, fig.height=4, fig.align = "center"}
 chap3.poisson.story.ppois <- function(num_success=3, rate=2.5, interval=1) {
@@ -425,7 +436,7 @@ do_dnorm()
 
 ### Gaussian Cumulative Distribution
 
-The following plot shows the probability that `Normal(0,1)` is *greater than or equal* to any value between -3 and +3.
+The following plot shows the probability that `Normal(0,1)` is *greater than* to any value between -3 and +3.
 
  
 

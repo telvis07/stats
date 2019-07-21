@@ -1,5 +1,5 @@
 ---
-title: "Stats 101: Common Probability Distributions"
+title: "Stats 101"
 author: "technicalelvis.com"
 output: 
   html_document:
@@ -16,7 +16,14 @@ fig_height: 3
 
 ## Common Probability Distributions
 
-This document lists common probability distributions described in [Introduction to Probability by Joseph Blizstein and Jessica Hwang](https://drive.google.com/file/d/1VmkAAGOYCTORq1wxSQqy255qLJjTNvBI/view). For each distribution, we show both the _probability density_ and _cumulative distribution_ plots. 
+This document lists common probability distributions described in
+
+* [Introduction to Probability by Joseph Blizstein and Jessica Hwang](https://drive.google.com/file/d/1VmkAAGOYCTORq1wxSQqy255qLJjTNvBI/view). 
+
+* [Little Inference Book by Brian Caffo](https://leanpub.com/LittleInferenceBook)
+
+
+For each distribution, we show both the _probability density_ and _cumulative distribution_ plots. 
 
 **Probability density** plots show the probability that a random variable $X$ equals some value $x$; expressed using the notation: $P(X=x)$. 
 
@@ -24,9 +31,9 @@ This document lists common probability distributions described in [Introduction 
 
 The cumulative distribution answers questions like: 
 
-* "probability a person's height equals 4 feet __or greater__"
-* "probability a cookie has __at least__ 10 chocolate chips"
-* "probability a shopping cart has 3 items __or greater__". 
+* "probability a person's height is __greater than__ 4 feet"
+* "probability a cookie has __less than__ 10 chocolate chips"
+* "probability a shopping cart has __greater than__ 3 items". 
 
 The __emphasized__ phrases indicate we want the total population with a value in a certain range. 
 This contrasts with probability density, that answers questions like:
@@ -63,7 +70,7 @@ The plot shows the probability of getting *exactly* _x_ HEADS in 10 biased coin 
 
 ### Binomial Cumulative distribution
 
-The plot shows the probability of getting _x_ HEADS or greater in 10 coin flips where the probability of HEADS is 20%.
+The plot shows the probability of getting greater than _x_ HEADS in 10 coin flips where the probability of HEADS is 20%.
 
 <img src="index_files/figure-html/pbinom-1.png" style="display: block; margin: auto;" />
 
@@ -82,7 +89,7 @@ The plot shows the probability of having *exactly* 1, 2, 3, or 4 aces in a 5 car
 
 ### Hypergeometric Cumulative Distribution
 
-The plot shows the probability of having _x_ aces *or greater* in a 5 card hand from a deck containing 52 cards.
+The plot shows the probability of having more than _x_ aces in a 5 card hand from a deck containing 52 cards.
 
 <img src="index_files/figure-html/phyper-1.png" style="display: block; margin: auto;" />
 
@@ -93,13 +100,13 @@ A uniform r.v. on the interval (a,b) is a completely random number between _a_ a
 
 ### Uniform Density
 
-The following plot shows the probability that `Unif(0,1)` *equals* any value between -0.5 and +1.5.
+Suppose that a die is rolled and $X$ is the number face up, what the probability that the value is 1, 2, 3, 4, 5, or 6.
 
 <img src="index_files/figure-html/dunif-1.png" style="display: block; margin: auto;" />
 
 ### Uniform Cumulative Distribution
 
-The following plot shows the probability that `Unif(0,1)` is *equal to or greater than* any value between -0.5 and +1.5. For example, there is a `25%` probablity of getting a value `0.75 or greater`.
+Suppose that a die is rolled and $X$ is the number face up, what the probability that the value is greater than 1, 2, 3, 4, 5, or 6.
 
 <img src="index_files/figure-html/punif-1.png" style="display: block; margin: auto;" />
 
@@ -119,7 +126,7 @@ probability that exactly $x$ people show up for the whole time?
 
 
 ### Poisson Cumulative Distribution
-For the previous example, what is the probability that $x$ or more people show up for the whole time?
+For the previous example, what is the probability that more than $x$ people show up for the whole time?
 
 <img src="index_files/figure-html/ppois-1.png" style="display: block; margin: auto;" />
 
@@ -264,7 +271,7 @@ The following plot shows the probability that `Normal(0,1)` *exactly equals* any
 
 ### Gaussian Cumulative Distribution
 
-The following plot shows the probability that `Normal(0,1)` is *greater than or equal* to any value between -3 and +3.
+The following plot shows the probability that `Normal(0,1)` is *greater than* to any value between -3 and +3.
 
  
 
