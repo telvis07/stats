@@ -14,7 +14,7 @@ fig_height: 3
 
 
 
-## Common Probability Distributions
+## Introduction to Probability Distributions
 
 This document lists common probability distributions described in
 
