@@ -22,7 +22,7 @@ fig_height: 3
 
 This document lists common probability distributions described in [Introduction to Probability by Joseph Blizstein and Jessica Hwang](https://drive.google.com/file/d/1VmkAAGOYCTORq1wxSQqy255qLJjTNvBI/view). For each distribution, we show both the _probability density_ and _cumulative distribution_ plots. 
 
-**Probability density** plots show the probability that a random variable $X$ equals a some value $x$; expressed using the notation: $P(X=x)$. 
+**Probability density** plots show the probability that a random variable $X$ equals some value $x$; expressed using the notation: $P(X=x)$. 
 
 **Cumulative distribution** plots show the probablity that a random variable $X$ _is less than or equal to_ some value $x$; expressed using the notation $P(X<=x)$.
 
@@ -269,7 +269,7 @@ A multivariate (MVN) normal distribution generalizes the Normal distribution int
 row _i_, column _j_ entry is Cov($X_i, X_j$).
 
 The following plot shows random variables from 2 bivariate normals: `BLUE` and `ORANGE`. The `BLUE` distribution has parameters
-$N((1,0)^T, I)$. The `ORANGE` distribition has parameters $N((0,1)T, I)$. **I** represents a 2x2 identity matrix - where the diagonals are `1` and other values are `0`.
+$N((1,0)^T, I)$. The `ORANGE` distribition has parameters $N((0,1)^T, I)$. **I** represents a 2x2 identity matrix - where the diagonals are `1` and other values are `0`.
 
 
 ```r
