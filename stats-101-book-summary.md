@@ -22,7 +22,7 @@ fig_height: 3
 
 This document lists common probability distributions described in [Introduction to Probability by Joseph Blizstein and Jessica Hwang](https://drive.google.com/file/d/1VmkAAGOYCTORq1wxSQqy255qLJjTNvBI/view). For each distribution, we show both the _probability density_ and _cumulative distribution_ plots. 
 
-**Probability density** plots show the _exact probability_ that a random variable $X$ equals a some value $x$; expressed using the notation: $P(X=x)$. 
+**Probability density** plots show the probability that a random variable $X$ equals a some value $x$; expressed using the notation: $P(X=x)$. 
 
 **Cumulative distribution** plots show the probablity that a random variable $X$ _is less than or equal to_ some value $x$; expressed using the notation $P(X<=x)$.
 
@@ -44,17 +44,17 @@ The __emphasized__ phrases indicate we want the slice of the population that exa
 
 ## Binomial
 Suppose that _n_ independent Bernoulli trials are performed, each with the same success probability p. Let
-_X_ be the number of successes. The distribution of X is called a _Binomial distribution_. For example, let 
+_X_ be the number of successes. The distribution of X is called a _Binomial distribution_. 
 
 ### Binomial Density
-A density plot shows the probability that a random variable *equals* some discrete value. The plot shows the probability of getting *exactly* _x_ HEADS in 10 coin flips where the probability of HEADS is 20%.
+The plot shows the probability of getting *exactly* _x_ HEADS in 10 coin flips where the probability of HEADS is 20%.
 
 <img src="stats-101-book-summary_files/figure-html/dbinom-1.png" style="display: block; margin: auto;" />
 
 
 ### Binomial Cumulative distribution
 
-The distribution plot shows the probability that a random variable *is less than* some value. The plot shows the probability of getting *less than* _x_ HEADS in 10 coin flips where the probability of HEADS is 20%.
+The plot shows the probability of getting *less than* _x_ HEADS in 10 coin flips where the probability of HEADS is 20%.
 
 <img src="stats-101-book-summary_files/figure-html/pbinom-1.png" style="display: block; margin: auto;" />
 
