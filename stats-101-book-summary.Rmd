@@ -5,9 +5,9 @@ output:
   html_document:
     toc: true
     theme: cosmo
-    keep_md: true
     pandoc_args: [
-      "-o", "index.html"
+      "-o", "index.html",
+      "-o", "stats-101-book-summary.html"
     ]
 
 
@@ -36,26 +36,39 @@ This document lists common probability distributions described in [Introduction 
 
 The cumulative distribution answers questions like: 
 
-* "probability a person's height equals 4 feet __or shorter__"
+* "probability a person's height equals 4 feet __or greater__"
 * "probability a cookie has __at least__ 10 chocolate chips"
-* "probability a shopping cart has 3 items __or fewer__". 
+* "probability a shopping cart has 3 items __or greater__". 
 
-The __emphasized__ phrases indicate we want the total population up to a certain value. 
+The __emphasized__ phrases indicate we want the total population with a value in a certain range. 
 This contrasts with probability density, that answers questions like:
 
 * "probability a person's height __exactly equals__ 4 feet"
 * "probability a cookie has __exactly__ 10 chocolate chips"
 * "probability a shopping cart has __exactly__ 3 items".
 
-The __emphasized__ phrases indicate we want the slice of the population that exactly equals a certain value.
+The __emphasized__ phrases indicate we want the slice of the population that exactly equals a certain value. 
+
+### Setting lower.tail parameter in R
+
+The `R` distribution functions (eg. pbinom, ppois, pnorm, etc.) have a `lower.tail` option to get the range above or below a threshold. 
+
+* Set `lower.tail = FALSE` to get the population percentage __above__ a threshold.
+* Set `lower.tail = TRUE` to get the population percentage __below__ a threshold.
+
+
+### Distribution vs Density
+
+In general, the term `distribution` is used to describe statistics on discrete variables (eg. item counts, customer counts, etc). The `density` applies to 
+continuous variables that can take any value from $-inf$ to $+inf$ (eg. heights, weights, etc. )
 
 
 ## Binomial
-Suppose that _n_ independent Bernoulli trials are performed, each with the same success probability p. Let
-_X_ be the number of successes. The distribution of X is called a _Binomial distribution_. 
+Suppose that _n_ independent coin flips (ie. Bernoulli trials) are performed, each with the same success probability p. Let
+_X_ be the number of HEADS (ie. successes). The distribution of X is called a _Binomial distribution_. 
 
 ### Binomial Density
-The plot shows the probability of getting *exactly* _x_ HEADS in 10 coin flips where the probability of HEADS is 20%.
+The plot shows the probability of getting *exactly* _x_ HEADS in 10 biased coin flips where the probability of HEADS is 20%.
 
 ```{r dbinom, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
 chap3.1 <- function(){
@@ -66,6 +79,7 @@ chap3.1 <- function(){
   df <- data.frame(x=x, y=y)
   g <- ggplot(df, aes(x=x, y=y)) +
     geom_point() +
+    scale_x_discrete(name="x", limits=x) +
     geom_linerange(aes(x=x, ymax=y, ymin=0)) +
     theme(plot.title = element_text(hjust = 0.5)) +
     labs(title="Binomial Density")
@@ -77,13 +91,13 @@ chap3.1()
 
 ### Binomial Cumulative distribution
 
-The plot shows the probability of getting *less than* _x_ HEADS in 10 coin flips where the probability of HEADS is 20%.
+The plot shows the probability of getting _x_ HEADS or greater in 10 coin flips where the probability of HEADS is 20%.
 
 ```{r pbinom, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
 chap3.2 <- function(){
   # Prob x<1:10 where X ~ Bin(5, 0.2)
   x <- 1:10
-  y <- pbinom(x, 10, 0.2)
+  y <- pbinom(x, 10, 0.2, lower.tail = F)
 
   df <- data.frame(x=x, y=y)
   g <- ggplot(df, aes(x=x, y=y)) +
@@ -135,7 +149,7 @@ chap3.3()
 
 ### Hypergeometric Cumulative Distribution
 
-The plot shows the probability of having *less than* 1, 2, 3, or 4 aces in a 5 card hand from a deck containing 52 cards.
+The plot shows the probability of having _x_ aces *or greater* in a 5 card hand from a deck containing 52 cards.
 
 ```{r phyper, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
 
@@ -146,7 +160,7 @@ chap3.4 <- function() {
   # - 48 non aces
   # - choose 5 cards per hand
   x <- 1:4
-  y <- phyper(x, 4, 48, 5)
+  y <- phyper(x, 4, 48, 5, lower.tail = F)
   df <- data.frame(x=x, y=y)
   g <- ggplot(df, aes(x=x, y=y)) +
     geom_line() +
@@ -167,7 +181,7 @@ A uniform r.v. on the interval (a,b) is a completely random number between _a_ a
 
 ### Uniform Density
 
-The following plot shows the probability that `Unif(0,1)` is *less than or equal* to any value between -0.5 and +1.5.
+The following plot shows the probability that `Unif(0,1)` *equals* any value between -0.5 and +1.5.
 
 ```{r dunif, echo=F, fig.width=6, fig.height=4, fig.align="center"}
 do_dunif <- function() {
@@ -186,13 +200,13 @@ do_dunif()
 
 ### Uniform Cumulative Distribution
 
-The following plot shows the probability that `Unif(0,1)` is *exactly equals* any value between -0.5 and +1.5.
+The following plot shows the probability that `Unif(0,1)` is *equal to or greater than* any value between -0.5 and +1.5. For example, there is a `25%` probablity of getting a value `0.75 or greater`.
 
 ```{r punif, echo=F, fig.width=6, fig.height=4, fig.align="center"}
 do_punif <- function() {
   # PDF
   x <- seq(-0.5, 1.5, 1/10000)
-  y <- punif(x, 0, 1)
+  y <- punif(x, 0, 1, lower.tail = F)
   datums <- data.frame(x=x, y=y)
   obj <- ggplot(datums, aes(x=x, y=y)) + 
     labs(title="Uniform Cumulative Distribution") +
@@ -214,7 +228,7 @@ $\lambda$ could be 20 (emails per hour), 10 (chips per cookie), and 2 (earthquak
 
 ### Poisson Density
 Consider an example where the number of people that show up at a bus stop is Poisson with a mean of 2.5 per hour. If watching the bus stop for 1 hours, what is the 
-probability that exactly $3$ people show up for the whole time?
+probability that exactly $x$ people show up for the whole time?
 
 ```{r dpois, echo=F,  fig.width=6, fig.height=4, fig.align = "center"}
 chap3.poisson.story.dpois <- function(num_success=3, rate=2.5, interval=1) {
@@ -241,7 +255,7 @@ chap3.poisson.story.dpois()
 
 
 ### Poisson Cumulative Distribution
-For the previous example, what is the probability that $3$ or fewer people show up for the whole time?
+For the previous example, what is the probability that $x$ or more people show up for the whole time?
 
 ```{r ppois, echo=F,  fig.width=6, fig.height=4, fig.align = "center"}
 chap3.poisson.story.ppois <- function(num_success=3, rate=2.5, interval=1) {
@@ -251,7 +265,7 @@ chap3.poisson.story.ppois <- function(num_success=3, rate=2.5, interval=1) {
   x <- 0:10
   df <- data.frame(x=x)
   
-  df['y'] <- ppois(x, lambda)
+  df['y'] <- ppois(x, lambda, lower.tail = F)
   p <- ggplot(df, aes(x=x, y=y)) +
     geom_line() +
     scale_x_discrete(name="x", limits=x) +
@@ -393,7 +407,8 @@ The simplest normal distribution is the _standard normal_, which is centered at 
 
 ### Gaussian Density
 
-The following plot shows the probability that `Normal(0,1)` is *less than or equal* to any value between -3 and +3.
+The following plot shows the probability that `Normal(0,1)` *exactly equals* any value between -3 and +3.
+
  
 ```{r dnorm, echo=F, fig.width=6, fig.height=4, fig.align = "center"}
  do_dnorm <- function() {
@@ -402,7 +417,9 @@ The following plot shows the probability that `Normal(0,1)` is *less than or equ
  datums <- data.frame(x=x, y=y)
  g <- ggplot(datums, aes(x, y)) + geom_line() + 
  theme(plot.title = element_text(hjust = 0.5)) +
+ scale_x_discrete(name="x", limits=seq(-3, 3, 1)) +
  labs(title="Normal Density")
+ 
  g
 }
  
@@ -412,17 +429,19 @@ do_dnorm()
 
 ### Gaussian Cumulative Distribution
 
-The following plot shows the probability that `Normal(0,1)` *exactly equals* any value between -3 and +3.
+The following plot shows the probability that `Normal(0,1)` is *greater than or equal* to any value between -3 and +3.
+
  
 
 ```{r pnorm, echo=F, fig.width=6, fig.height=4, fig.align="center"}
 do_pnorm <- function() {
    # x <- seq(0, 1, 0.001)
    x <- seq(-3, 3, 0.01)
-   y <- pnorm(x)
+   y <- pnorm(x, lower.tail = F)
    df <- data.frame(x=x, y=y)
    ggplot(df, aes(x=x, y=y)) + geom_line() +
      theme(plot.title = element_text(hjust = 0.5)) +
+     scale_x_discrete(name="x", limits=seq(-3, 3, 1)) +
      labs(title="Normal Cumulative Distribution")
 }
 

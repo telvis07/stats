@@ -30,16 +30,21 @@ The cumulative distribution answers questions like:
 
 * "probability a person's height equals 4 feet __or shorter__"
 * "probability a cookie has __at least__ 10 chocolate chips"
-* "probability a shopping cart has 3 items __or fewer__". 
+* "probability a shopping cart has 3 items __or greater__". 
 
-The __emphasized__ phrases indicate we want the total population up to a certain value. 
+The __emphasized__ phrases indicate we want the total population with a value in a certain range. 
 This contrasts with probability density, that answers questions like:
 
 * "probability a person's height __exactly equals__ 4 feet"
 * "probability a cookie has __exactly__ 10 chocolate chips"
 * "probability a shopping cart has __exactly__ 3 items".
 
-The __emphasized__ phrases indicate we want the slice of the population that exactly equals a certain value.
+The __emphasized__ phrases indicate we want the slice of the population that exactly equals a certain value. 
+
+### Setting lower.tail parameter in R
+
+Strictly speaking, the cumulative distribution shows the percentage of the population that lies below some target value (i.e. percentile). Generally you usually want `1 minus cumulative distribution`, which tells the percentage of the population
+that lies in the range of interest. The distribution functions in `R` have a `lower.tail` option for this purpose. Set `lower.tail = FALSE` to get `1 - cumulative distribution` or set it to `TRUE` to get the default behavior.
 
 
 ## Binomial
